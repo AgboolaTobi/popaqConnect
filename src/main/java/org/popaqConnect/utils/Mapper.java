@@ -13,6 +13,7 @@ public class Mapper {
         client.setAddress(registerRequest.getAddress());
         client.setPhoneNumber(registerRequest.getPhoneNumber());
         client.setAge(registerRequest.getAge());
+        client.setPassword(registerRequest.getPassword());
         return client;
     }
 }

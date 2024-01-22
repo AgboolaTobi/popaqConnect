@@ -17,6 +17,8 @@ public class User {
     private String phoneNumber;
     private String age;
     private String address;
+    private boolean isLoginStatus;
+    private String password;
 
 
 }
