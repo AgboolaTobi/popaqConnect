@@ -3,10 +3,11 @@ package org.popaqConnect.services;
 import lombok.extern.slf4j.Slf4j;
 import org.popaqConnect.data.models.Client;
 import org.popaqConnect.data.repositories.ClientRepository;
-import org.popaqConnect.data.repositories.UserRepository;
 import org.popaqConnect.dtos.requests.RegisterRequest;
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.UserExistException;
+import org.popaqConnect.services.ServiceInterfaces.ClientService;
+import org.popaqConnect.services.ServiceInterfaces.UserService;
 import org.popaqConnect.utils.Mapper;
 import org.popaqConnect.utils.VerifyPassword;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class ClientServiceImp implements ClientService{
+public class ClientServiceImp implements ClientService {
     @Autowired
     ClientRepository clientRepository;
     @Autowired

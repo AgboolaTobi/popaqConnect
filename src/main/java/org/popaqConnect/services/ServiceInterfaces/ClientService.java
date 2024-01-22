@@ -1,4 +1,4 @@
-package org.popaqConnect.services;
+package org.popaqConnect.services.ServiceInterfaces;
 
 import org.popaqConnect.dtos.requests.RegisterRequest;
 

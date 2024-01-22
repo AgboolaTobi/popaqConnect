@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.popaqConnect.dtos.requests.RegisterRequest;
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.UserExistException;
-import org.popaqConnect.utils.VerifyPassword;
+import org.popaqConnect.services.ServiceInterfaces.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
