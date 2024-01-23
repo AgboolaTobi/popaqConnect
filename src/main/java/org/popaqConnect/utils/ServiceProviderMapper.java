@@ -1,5 +1,6 @@
 package org.popaqConnect.utils;
 
+import org.popaqConnect.data.JobCategory;
 import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.dtos.requests.ServiceProviderRegisterRequest;
@@ -14,8 +15,6 @@ public class ServiceProviderMapper {
         serviceProvider.setBioData(registerRequest.getBioData());
         serviceProvider.setPassword(registerRequest.getPassword());
         serviceProvider.setChargePerHour(registerRequest.getChargePerHour());
-        Job job = new Job();
-        serviceProvider.setJob(job);
         return serviceProvider;
     }
 

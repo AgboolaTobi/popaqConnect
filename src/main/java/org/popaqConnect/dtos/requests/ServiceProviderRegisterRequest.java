@@ -16,7 +16,8 @@ public class ServiceProviderRegisterRequest {
     private int yearsOfExperience;
     private String bioData;
     private double chargePerHour;
-    private Job job;
+    private String category;
+    private String jobTitle;
 
 
 }

@@ -7,5 +7,6 @@ public enum JobCategory {
     ARTISIAN,
     ENGINEER,
     CAREGIVER,
-    AGENT
+    AGENT,
+    EDUCATION
 }

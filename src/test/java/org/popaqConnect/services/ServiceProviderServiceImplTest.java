@@ -1,8 +1,11 @@
 package org.popaqConnect.services;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.popaqConnect.data.JobCategory;
 import org.popaqConnect.data.models.Job;
+import org.popaqConnect.data.repositories.JobRepository;
+import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.LoginRequest;
 import org.popaqConnect.dtos.requests.ServiceProviderRegisterRequest;
 import org.popaqConnect.exceptions.InvalidDetailsException;
@@ -16,6 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ServiceProviderServiceImplTest {
    @Autowired
    ServiceProviderService service;
+   @Autowired
+   ServiceProviderRepository serviceProviderRepository;
+   @Autowired
+   JobRepository jobRepository;
+   @BeforeEach
+   public void deleteThisAfterEachTest(){
+      serviceProviderRepository.deleteAll();
+      jobRepository.deleteAll();
+   }
 
    @Test
    public void serviceProvider_RegisterWithWrong_PasswordFormatThrowExceptionTest(){
@@ -29,10 +41,8 @@ public class ServiceProviderServiceImplTest {
       registerRequest.setYearsOfExperience(2);
       registerRequest.setBioData("i an philip i am a software engineer");
       registerRequest.setChargePerHour(2500.00);
-      Job job = new Job();
-      job.setJobCategory(JobCategory.ENGINEER);
-      job.setJobTitle("Software engineer");
-      registerRequest.setJob(job);
+      registerRequest.setCategory("ENGINEER");
+      registerRequest.setJobTitle("Software engineer");
       assertThrows(InvalidDetailsException.class, ()-> service.register(registerRequest));
 
    }
@@ -48,10 +58,8 @@ public class ServiceProviderServiceImplTest {
       registerRequest.setYearsOfExperience(2);
       registerRequest.setBioData("i an philip i am a software engineer");
       registerRequest.setChargePerHour(2500.00);
-      Job job = new Job();
-      job.setJobCategory(JobCategory.ENGINEER);
-      job.setJobTitle("Software engineer");
-      registerRequest.setJob(job);
+      registerRequest.setCategory("ENGINEER");
+      registerRequest.setJobTitle("Software engineer");
       assertThrows(InvalidDetailsException.class, ()-> service.register(registerRequest));
    }
 
@@ -67,10 +75,8 @@ public class ServiceProviderServiceImplTest {
       registerRequest.setYearsOfExperience(2);
       registerRequest.setBioData("i an philip i am a software engineer");
       registerRequest.setChargePerHour(2500.00);
-      Job job = new Job();
-      job.setJobCategory(JobCategory.ENGINEER);
-      job.setJobTitle("Software engineer");
-      registerRequest.setJob(job);
+      registerRequest.setCategory("ENGINEER");
+      registerRequest.setJobTitle("Software engineer");
       assertThrows(InvalidDetailsException.class, ()-> service.register(registerRequest));
    }
    @Test
@@ -85,10 +91,8 @@ public class ServiceProviderServiceImplTest {
       registerRequest.setYearsOfExperience(2);
       registerRequest.setBioData("i an philip i am a software engineer");
       registerRequest.setChargePerHour(2500.00);
-      Job job = new Job();
-      job.setJobCategory(JobCategory.ENGINEER);
-      job.setJobTitle("Software engineer");
-      registerRequest.setJob(job);
+      registerRequest.setCategory("ENGINEER");
+      registerRequest.setJobTitle("Software engineer");
       service.register(registerRequest);
       assertThrows(UserExistException.class, ()-> service.register(registerRequest));
    }
@@ -104,10 +108,8 @@ public class ServiceProviderServiceImplTest {
       registerRequest.setYearsOfExperience(2);
       registerRequest.setBioData("i an philip i am a software engineer");
       registerRequest.setChargePerHour(2500.00);
-      Job job = new Job();
-      job.setJobCategory(JobCategory.ENGINEER);
-      job.setJobTitle("Software engineer");
-      registerRequest.setJob(job);
+      registerRequest.setCategory("ENGINEER");
+      registerRequest.setJobTitle("Software engineer");
       service.register(registerRequest);
       LoginRequest loginRequest = new LoginRequest();
       loginRequest.setEmail("philipoddacey75@gmail.com");
@@ -126,15 +128,17 @@ public class ServiceProviderServiceImplTest {
       registerRequest.setYearsOfExperience(2);
       registerRequest.setBioData("i an philip i am a software engineer");
       registerRequest.setChargePerHour(2500.00);
-      Job job = new Job();
-      job.setJobCategory(JobCategory.ENGINEER);
-      job.setJobTitle("Software engineer");
-      registerRequest.setJob(job);
+      registerRequest.setCategory("ENGINEER");
+      registerRequest.setJobTitle("Software engineer");
       service.register(registerRequest);
       LoginRequest loginRequest = new LoginRequest();
       loginRequest.setEmail("philipodey75@gmail.com");
       loginRequest.setPassword("Ope5y5xv@");
       assertThrows(InvalidDetailsException.class, ()->  service.login(loginRequest));
+   }
+   @Test
+   public void registerServiceProvider_LoginWithTheTheRightDetails_LogoutTest(){
+
    }
 
 }

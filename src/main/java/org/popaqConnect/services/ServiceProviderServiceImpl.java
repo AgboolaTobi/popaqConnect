@@ -1,5 +1,6 @@
 package org.popaqConnect.services;
 
+import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.LoginRequest;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class ServiceProviderServiceImpl implements ServiceProviderService{
     @Autowired
     ServiceProviderRepository providerRepository;
+    @Autowired
+    JobService jobService;
     @Override
     public void register(ServiceProviderRegisterRequest registerRequest) {
         if(userExist(registerRequest.getEmail())) throw new UserExistException(registerRequest.getEmail() + " already exist!!!");
@@ -23,6 +26,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService{
         if(!VerifyPassword.verifyPassword(registerRequest.getPassword())) throw new InvalidDetailsException("Invalid password format!!!");
         if (!VerifyPassword.verifyPhoneNumber(registerRequest.getPhoneNumber())) throw new InvalidDetailsException("Invalid phone number");
         ServiceProvider newServiceProvider = ServiceProviderMapper.serviceProviderMap(registerRequest);
+        Job job = jobService.save(registerRequest.getCategory(), registerRequest.getJobTitle());
+        newServiceProvider.setJob(job);
         providerRepository.save(newServiceProvider);
     }
 
