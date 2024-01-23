@@ -1,7 +1,8 @@
 package org.popaqConnect.data.repositories;
 
 import org.popaqConnect.data.models.Trainee;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface TraineeRepository extends JpaRepository<Trainee,Long> {
+public interface TraineeRepository extends MongoRepository<Trainee,String> {
+    Trainee findByEmail(String email);
 }

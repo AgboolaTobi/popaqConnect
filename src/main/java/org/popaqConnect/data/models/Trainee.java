@@ -1,14 +1,24 @@
 package org.popaqConnect.data.models;
-
-import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+
+
+@Document
 @Data
-@Entity
-@DiscriminatorValue("Trainee")
-public class Trainee extends User{
+public class Trainee{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     private String bioData;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phoneNumber;
+    private String age;
+    private String address;
+    private String password;
+    private boolean isLocked;
+
 }

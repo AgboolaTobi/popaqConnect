@@ -1,10 +1,11 @@
 package org.popaqConnect.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.popaqConnect.data.models.Client;
+import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.repositories.ClientRepository;
-import org.popaqConnect.data.repositories.UserRepository;
 import org.popaqConnect.dtos.requests.RegisterRequest;
+import org.popaqConnect.dtos.requests.SearchByCategory;
+import org.popaqConnect.dtos.requests.SearchByDRopTitleRequest;
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.UserExistException;
 import org.popaqConnect.utils.Mapper;
@@ -13,34 +14,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-@Slf4j
 public class ClientServiceImp implements ClientService{
     @Autowired
     ClientRepository clientRepository;
     @Autowired
-    UserService userService;
+    JobService jobService;
 
     @Override
     public void register(RegisterRequest registerRequest) {
-        log.info("1");
         if(userExist(registerRequest.getEmail()))throw new UserExistException("User exist");
-        log.info("2");
         if(!VerifyPassword.verifyPassword(registerRequest.getPassword()))throw new InvalidDetailsException("Wrong password format");
-        log.info("3");
         if(!VerifyPassword.verifyEmail(registerRequest.getEmail()))throw new InvalidDetailsException("Invalid email format");
-        log.info("4");
         Client newClient = Mapper.mapClient(registerRequest);
-        log.info("5");
         clientRepository.save(newClient);
-//        log.info("6");
-//        userService.save(newClient);
     }
-
+    @Override
+    public List<Job> searchBYDropTitle(SearchByDRopTitleRequest search) {
+        Client client = clientRepository.findByEmail(search.getEmail());
+        List<Job> jobList = jobService.findByTitle(search.getTitle());
+        clientRepository.save(client);
+        return jobList;
+    }
+    @Override
+    public List<Job> searchByCategory(SearchByCategory search) {
+        Client client = clientRepository.findByEmail(search.getEmail());
+        List<Job> jobList = jobService.findByCategory(search.getCategory());
+        clientRepository.save(client);
+        return jobList;
+    }
     private boolean userExist(String email){
         Client client = clientRepository.findByEmail(email);
         return client!=null;
     }
-
 
 }
