@@ -8,14 +8,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Trainee{
     @Id
-    private String id;
+    private String bioData;
+    private String userId;
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
     private String age;
     private String address;
-    private boolean isLoginStatus;
     private String password;
-    private String bioData;
 }

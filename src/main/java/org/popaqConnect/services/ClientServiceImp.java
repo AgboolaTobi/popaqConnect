@@ -5,8 +5,12 @@ import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.models.Client;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.repositories.ClientRepository;
+
+import org.popaqConnect.dtos.requests.RegisterRequest;
+
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.BookResponse;
+
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.InvalidLoginException;
 import org.popaqConnect.exceptions.UnAvailableException;
@@ -31,7 +35,6 @@ public class ClientServiceImp implements ClientService{
     BookServices bookServices;
     @Autowired
     AdminService adminService;
-
 
     @Override
     public void register(RegisterRequest registerRequest) {

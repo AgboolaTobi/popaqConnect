@@ -5,7 +5,7 @@ import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.dtos.requests.EmailRequest;
 import org.popaqConnect.dtos.requests.RegisterRequest;
 
-public class Mapper {
+public class  Mapper {
 
     public static Client mapClient(RegisterRequest registerRequest){
         Client client = new Client();
