@@ -11,5 +11,5 @@ public interface ClientService {
 
     void register(RegisterRequest registerRequest);
     List<Job> searchBYDropTitle(SearchByDRopTitleRequest search);
-    List<Job> searchByCategory(SearchByCategory search);
+
 }

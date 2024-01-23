@@ -38,16 +38,10 @@ public class ClientServiceImp implements ClientService{
         clientRepository.save(client);
         return jobList;
     }
-    @Override
-    public List<Job> searchByCategory(SearchByCategory search) {
-        Client client = clientRepository.findByEmail(search.getEmail());
-        List<Job> jobList = jobService.findByCategory(search.getCategory());
-        clientRepository.save(client);
-        return jobList;
-    }
     private boolean userExist(String email){
         Client client = clientRepository.findByEmail(email);
         return client!=null;
     }
+
 
 }
