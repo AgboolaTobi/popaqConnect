@@ -22,15 +22,4 @@ public class JobServiceImpl implements  JobService{
         }
         return jobList1;
     }
-    @Override
-    public List<Job> findByCategory(String category) {
-        List<Job> jobList = new ArrayList<>();
-        List<Job> jobs = jobRepository.findAll();
-        for (Job job1 : jobs){
-            if (job1.getJobCategory().equals(category)){
-                jobList.add(job1);
-            }
-        }
-        return jobList;
-    }
 }

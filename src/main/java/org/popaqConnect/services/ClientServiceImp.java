@@ -4,7 +4,6 @@ import org.popaqConnect.data.models.Client;
 import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.dtos.requests.RegisterRequest;
-import org.popaqConnect.dtos.requests.SearchByCategory;
 import org.popaqConnect.dtos.requests.SearchByDRopTitleRequest;
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.UserExistException;
