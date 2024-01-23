@@ -1,8 +1,7 @@
 package org.popaqConnect.data.repositories;
 
-import org.popaqConnect.data.models.Job;
+import org.popaqConnect.data.models.Book;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface JobRepository extends MongoRepository<Job,String> {
-
+public interface BookRepository extends MongoRepository<Book,String> {
 }
