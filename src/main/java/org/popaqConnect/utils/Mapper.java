@@ -3,7 +3,7 @@ package org.popaqConnect.utils;
 import org.popaqConnect.data.models.Client;
 import org.popaqConnect.dtos.requests.RegisterRequest;
 
-public class Mapper {
+public class  Mapper {
 
     public static Client mapClient(RegisterRequest registerRequest){
         Client client = new Client();
