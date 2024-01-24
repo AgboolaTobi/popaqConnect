@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 public class ServiceProviderServiceImplTest {
    @Autowired
-   ServiceProviderService service;
+   ServiceProviderServices service;
    @Autowired
    ServiceProviderRepository serviceProviderRepository;
    @Autowired
@@ -117,28 +117,25 @@ public class ServiceProviderServiceImplTest {
       assertThrows(UserExistException.class, ()->  service.login(loginRequest));
    }
     @Test
-   public void registerServiceProvider_WithTheRightDetails_LoginWithTheWrongPasswordThrowException(){
-      ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
-      registerRequest.setFirstName("ope");
-      registerRequest.setLastName("Mr Tobi");
-      registerRequest.setPassword("PhilipOdey@75");
-      registerRequest.setEmail("philipodey75@gmail.com");
-      registerRequest.setAddress("yaba mowe");
-      registerRequest.setPhoneNumber("+2349019539651");
-      registerRequest.setYearsOfExperience(2);
-      registerRequest.setBioData("i an philip i am a software engineer");
-      registerRequest.setChargePerHour(2500.00);
-      registerRequest.setCategory("ENGINEER");
-      registerRequest.setJobTitle("Software engineer");
-      service.register(registerRequest);
-      LoginRequest loginRequest = new LoginRequest();
-      loginRequest.setEmail("philipodey75@gmail.com");
-      loginRequest.setPassword("Ope5y5xv@");
-      assertThrows(InvalidDetailsException.class, ()->  service.login(loginRequest));
-   }
-   @Test
-   public void registerServiceProvider_LoginWithTheTheRightDetails_LogoutTest(){
+   public void registerServiceProvider_WithTheRightDetails_LoginWithTheWrongPasswordThrowException() {
+       ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
+       registerRequest.setFirstName("ope");
+       registerRequest.setLastName("Mr Tobi");
+       registerRequest.setPassword("PhilipOdey@75");
+       registerRequest.setEmail("philipodey75@gmail.com");
+       registerRequest.setAddress("yaba mowe");
+       registerRequest.setPhoneNumber("+2349019539651");
+       registerRequest.setYearsOfExperience(2);
+       registerRequest.setBioData("i an philip i am a software engineer");
+       registerRequest.setChargePerHour(2500.00);
+       registerRequest.setCategory("ENGINEER");
+       registerRequest.setJobTitle("Software engineer");
+       service.register(registerRequest);
+       LoginRequest loginRequest = new LoginRequest();
+       loginRequest.setEmail("philipodey75@gmail.com");
+       loginRequest.setPassword("Ope5y5xv@");
+       assertThrows(InvalidDetailsException.class, () -> service.login(loginRequest));
+    }
 
-   }
 
 }

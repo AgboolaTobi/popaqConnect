@@ -1,6 +1,7 @@
 package org.popaqConnect.data.models;
 
 import lombok.Data;
+import org.popaqConnect.data.TraineeStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,8 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Trainee{
     @Id
+    private String id;
     private String bioData;
-    private String userId;
     private String firstName;
     private String lastName;
     private String email;
@@ -17,4 +18,6 @@ public class Trainee{
     private String age;
     private String address;
     private String password;
+    private TraineeStatus traineeStatus=TraineeStatus.NOVICE;
+    private String nameOfTrainer;
 }

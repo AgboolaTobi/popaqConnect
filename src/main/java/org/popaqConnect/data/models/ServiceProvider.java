@@ -3,6 +3,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Data
 @Document
 
@@ -22,4 +24,6 @@ public class ServiceProvider {
     private double chargePerHour;
     private boolean isAvailable=true;
     private Job job;
+    private List<Trainee> trainees;
+    private boolean availableForTraining;
 }

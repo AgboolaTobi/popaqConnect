@@ -3,14 +3,14 @@ package org.popaqConnect.services;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.popaqConnect.data.models.Book;
-import org.popaqConnect.data.models.BookType;
+import org.popaqConnect.data.BookType;
 import org.popaqConnect.data.repositories.BookRepository;
 import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.*;
+import org.popaqConnect.dtos.response.BookResponse;
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.InvalidLoginException;
-import org.popaqConnect.exceptions.UnAvailableException;
 import org.popaqConnect.exceptions.UserExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,9 +37,8 @@ class ClientServiceImpTest {
     public void doThisAfterEach(){
         clientRepository.deleteAll();
         serviceProviderRepository.deleteAll();
-        bookRepository.deleteAll();
+         bookRepository.deleteAll();
     }
-
     @Test
 
     public void testThatIfClientRegistersWithInvalidPasswordFormatThrowsAndException(){
@@ -94,8 +93,8 @@ class ClientServiceImpTest {
         registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setClientEmail("ope@gmail.com");
+        ClientLoginRequest loginRequest = new ClientLoginRequest();
+        loginRequest.setEmail("ope@gmail.com");
         loginRequest.setPassword("Opedert");
         assertThrows(InvalidLoginException.class,()->clientService.login(loginRequest));
     }
@@ -111,14 +110,25 @@ class ClientServiceImpTest {
         registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setClientEmail("ope@gmail.com");
+        ClientLoginRequest loginRequest = new ClientLoginRequest();
+        loginRequest.setEmail("ope@gmail.com");
         loginRequest.setPassword("Ope13@");
         clientService.login(loginRequest);
 
-        registerRequest.setEmail("opeoluwaagnes@gmail.com");
+        ServiceProviderRegisterRequest registerRequests = new ServiceProviderRegisterRequest();
+        registerRequests.setFirstName("ope");
+        registerRequests.setLastName("Mr Tobi");
+        registerRequests.setPassword("PhilipOdey@75");
+        registerRequests.setEmail("opeoluwaagnes@gmail.com");
+        registerRequests.setAddress("yaba mowe");
+        registerRequests.setPhoneNumber("+2349019539651");
+        registerRequests.setYearsOfExperience(2);
+        registerRequests.setBioData("i an philip i am a software engineer");
+        registerRequests.setChargePerHour(2500.00);
+        registerRequests.setCategory("ENGINEER");
+        registerRequests.setJobTitle("Software engineer");
 
-        serviceProviderServices.register(registerRequest);
+        serviceProviderServices.register(registerRequests);
 
         BookRequest bookRequest = new BookRequest();
         bookRequest.setServiceProviderEmail("opeoluwaagnes@gmail.com");
@@ -142,37 +152,44 @@ class ClientServiceImpTest {
         registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setClientEmail("ope@gmail.com");
+        ClientLoginRequest loginRequest = new ClientLoginRequest();
+        loginRequest.setEmail("ope@gmail.com");
         loginRequest.setPassword("Ope13@");
         clientService.login(loginRequest);
 
-        registerRequest.setEmail("opeoluwaagnes@gmail.com");
+        ServiceProviderRegisterRequest registerRequests = new ServiceProviderRegisterRequest();
+        registerRequests.setFirstName("ope");
+        registerRequests.setLastName("Mr Tobi");
+        registerRequests.setPassword("PhilipOdey@75");
+        registerRequests.setEmail("opeoluwaagnes@gmail.com");
+        registerRequests.setAddress("yaba mowe");
+        registerRequests.setPhoneNumber("+2349019539651");
+        registerRequests.setYearsOfExperience(2);
+        registerRequests.setBioData("i an philip i am a software engineer");
+        registerRequests.setChargePerHour(2500.00);
+        registerRequests.setCategory("ENGINEER");
+        registerRequests.setJobTitle("Software engineer");
 
-        serviceProviderServices.register(registerRequest);
+        serviceProviderServices.register(registerRequests);
 
         BookRequest bookRequest = new BookRequest();
         bookRequest.setServiceProviderEmail("opeoluwaagnes@gmail.com");
         bookRequest.setDescription("your service as hairstylist");
         bookRequest.setTime("2 hours");
         bookRequest.setClientEmail("ope@gmail.com");
-        clientService.bookServices(bookRequest);
+        BookResponse bookingId = clientService.bookServices(bookRequest);
         FindABookRequest findABookRequest = new FindABookRequest();
         findABookRequest.setEmail("ope@gmail.com");
-        findABookRequest.setBookId("BK0");
+        findABookRequest.setBookId(bookingId.getMessage());
         Book book = clientService.findABookRequest(findABookRequest);
         assertSame(BookType.NOTACCEPTED,book.getAcceptedProject());
 
         AcceptBookingRequest acceptBookingRequest = new AcceptBookingRequest();
-        acceptBookingRequest.setId("BK0");
+        acceptBookingRequest.setId(bookingId.getMessage());
         acceptBookingRequest.setEmail("opeoluwaagnes@gmail.com");
         acceptBookingRequest.setResponse("accepted");
         serviceProviderServices.acceptClientBookRequest(acceptBookingRequest);
 
-
-        findABookRequest = new FindABookRequest();
-        findABookRequest.setEmail("ope@gmail.com");
-        findABookRequest.setBookId("BK0");
         book = clientService.findABookRequest(findABookRequest);
         assertSame(BookType.ACCEPTED,book.getAcceptedProject());
 
