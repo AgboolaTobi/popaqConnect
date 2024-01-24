@@ -6,7 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document
-public class Client{
+
+
+public class Client {
     @Id
     private String id;
     private String firstName;
@@ -15,6 +17,8 @@ public class Client{
     private String phoneNumber;
     private String age;
     private String address;
-    private boolean isLoginStatus;
     private String password;
+    private boolean isLocked;
+    private boolean isLoginStatus;
+
 }

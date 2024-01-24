@@ -1,12 +1,13 @@
 package org.popaqConnect.data.models;
-
 import lombok.Data;
 import org.popaqConnect.data.TraineeStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
+
+
 @Document
+@Data
 public class Trainee{
     @Id
     private String id;
@@ -20,4 +21,5 @@ public class Trainee{
     private String password;
     private TraineeStatus traineeStatus=TraineeStatus.NOVICE;
     private String nameOfTrainer;
+    private boolean isLocked;
 }

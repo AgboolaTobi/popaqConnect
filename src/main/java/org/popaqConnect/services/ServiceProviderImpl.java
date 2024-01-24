@@ -40,9 +40,10 @@ public class ServiceProviderImpl implements ServiceProviderServices {
 
     @Override
     public void login(LoginRequest loginRequest) {
-        Optional <ServiceProvider> serviceProvider = findUser(loginRequest.email);
+        Optional <ServiceProvider> serviceProvider = findUser(loginRequest.getEmail());
         if (serviceProvider.isEmpty()) throw new InvalidLoginException("Invalid Credentials");
         if (!serviceProvider.get().getPassword().equals(loginRequest.getPassword())) throw new InvalidDetailsException("Invalid Login Details!!");
+        serviceProvider.get().setLoginStatus(true);
         providerRepository.save(serviceProvider.get());
 
     }
@@ -63,7 +64,7 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     public void acceptClientBookRequest(AcceptBookingRequest bookingRequest) {
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(bookingRequest.getEmail());
         userExist(bookingRequest.getEmail());
-        if (isLocked(bookingRequest.getEmail()))throw new AppLockedException("Kindly login");
+        if (!isLocked(bookingRequest.getEmail()))throw new AppLockedException("Kindly login");
         bookServices.setBookType(serviceProvider.get().getEmail(),bookingRequest);
         serviceProvider.get().setAvailable(false);
         providerRepository.save(serviceProvider.get());

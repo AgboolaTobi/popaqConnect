@@ -1,5 +1,12 @@
 package org.popaqConnect.services;
 
+
+import org.popaqConnect.data.models.Client;
+import org.popaqConnect.data.models.Job;
+import org.popaqConnect.data.repositories.ClientRepository;
+import org.popaqConnect.dtos.requests.RegisterRequest;
+import org.popaqConnect.dtos.requests.SearchByDRopTitleRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.models.Client;
@@ -19,19 +26,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 import java.util.Optional;
 
+
 @Service
-@Slf4j
 public class ClientServiceImp implements ClientService{
     @Autowired
     ClientRepository clientRepository;
+    @Autowired
+    JobService jobService;
     @Autowired
     ServiceProviderServices servicePriovider;
     @Autowired
     BookServices bookServices;
     @Autowired
     AdminService adminService;
+
 
     @Override
     public void register(RegisterRequest registerRequest) {
@@ -41,6 +52,14 @@ public class ClientServiceImp implements ClientService{
         Client newClient = Mapper.mapClient(registerRequest);
         clientRepository.save(newClient);
     }
+    @Override
+    public List<Job> searchBYDropTitle(SearchByDRopTitleRequest search) {
+        Client client = clientRepository.findByEmail(search.getEmail());
+        List<Job> jobList = jobService.findByTitle(search.getTitle());
+        clientRepository.save(client);
+        return jobList;
+    }
+
 
     @Override
     public void login(ClientLoginRequest loginRequest) {
@@ -71,20 +90,18 @@ public class ClientServiceImp implements ClientService{
     public List<Book> findAllBookingRequest(String mail) {
         Client client = clientRepository.findByEmail(mail);
         if(!userExist(mail))throw new UserExistException("User doesn't Exist");
-        if(isLocked(mail))throw new AppLockedException("Kindly login");
+        if(!isLocked(mail))throw new AppLockedException("Kindly login");
         return bookServices.findUserBookRequest(client.getEmail());
     }
 
     @Override
     public Book findABookRequest(FindABookRequest findABookRequest) {
         if(!userExist(findABookRequest.getEmail()))throw new UserExistException("user doesn't exist");
-        if(isLocked(findABookRequest.getEmail()))throw new AppLockedException("Kindly login");
+        if(!isLocked(findABookRequest.getEmail()))throw new AppLockedException("Kindly login");
         Book booking = bookServices.findABookRequest(findABookRequest.getBookId(), findABookRequest.getEmail());
         if(booking == null)throw new BookingRequestException("Booking request is invalid");
         return booking;
     }
-
-
     private boolean userExist(String email){
         Client client = clientRepository.findByEmail(email);
         return client!=null;
