@@ -25,8 +25,6 @@ public class TraineeServiceImpl implements TraineeService{
             throw new InvalidDetailsException("Wrong password format");
         if(!VerifyPassword.verifyEmail(registerRequest.getEmail()))
             throw new InvalidDetailsException("Invalid email format");
-//        if (!VerifyPassword.verifyPhoneNumber(registerRequest.getPhoneNumber()))
-//            throw new InvalidDetailsException("Invalid PhoneNumber");
         Trainee trainee = mapTrainee(registerRequest);
         traineeRepository.save(trainee);
     }

@@ -5,4 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface TraineeRepository extends MongoRepository<Trainee,String> {
     Trainee findByEmail(String email);
+
 }

@@ -9,7 +9,6 @@ public class VerifyPassword {
         return email.matches("[a-zA-Z0-9!#$%^&():;.*_~`+{}]+@[a-z]+[.][a-z]{2,3}");
     }
     public static boolean verifyPhoneNumber(String phoneNumber){
-        return true;
-
+        return phoneNumber.matches("[+234]{2,}[0-9]{7,}");
     }
 }
