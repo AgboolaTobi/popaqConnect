@@ -13,6 +13,8 @@ import org.popaqConnect.utils.VerifyPassword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService{
     @Autowired
@@ -34,15 +36,15 @@ public class ServiceProviderServiceImpl implements ServiceProviderService{
     @Override
     public void login(LoginRequest loginRequest) {
 
-        ServiceProvider serviceProvider = providerRepository.findByEmail(loginRequest.getEmail());
+        Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(loginRequest.getEmail());
         if (!userExist(loginRequest.getEmail())) throw new UserExistException("User does not exist");
 //        if (!serviceProvider.getEmail().equals(loginRequest.getEmail())) throw new InvalidDetailsException("Invalid Login Details!!");
-        if (!serviceProvider.getPassword().equals(loginRequest.getPassword())) throw new InvalidDetailsException("Invalid Login Details!!");
-        providerRepository.save(serviceProvider);
+        if (!serviceProvider.get().getPassword().equals(loginRequest.getPassword())) throw new InvalidDetailsException("Invalid Login Details!!");
+        providerRepository.save(serviceProvider.get());
     }
 
     private boolean userExist(String email) {
-        ServiceProvider serviceProvide = providerRepository.findByEmail(email);
+        Optional<ServiceProvider> serviceProvide = providerRepository.findByEmail(email);
         return serviceProvide != null;
     }
 }

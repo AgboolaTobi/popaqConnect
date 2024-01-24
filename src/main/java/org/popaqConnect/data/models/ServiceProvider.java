@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document
-
 public class ServiceProvider {
     @Id
     private String id;
@@ -15,11 +14,11 @@ public class ServiceProvider {
     private String phoneNumber;
     private String age;
     private String address;
-    private boolean isLoginStatus;
     private String password;
     private int yearsOfExperience;
     private String bioData;
     private double chargePerHour;
     private boolean isAvailable=true;
+    private boolean isLoginStatus;
     private Job job;
 }

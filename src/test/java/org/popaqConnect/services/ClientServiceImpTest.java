@@ -2,6 +2,9 @@ package org.popaqConnect.services;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.popaqConnect.data.repositories.ClientRepository;
+import org.popaqConnect.dtos.requests.RegisterRequest;
+import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.models.BookType;
 import org.popaqConnect.data.repositories.BookRepository;
@@ -25,6 +28,7 @@ class ClientServiceImpTest {
     ClientService clientService;
     @Autowired
     ClientRepository clientRepository;
+
     @Autowired
     ServiceProviderRepository  serviceProviderRepository;
     @Autowired
@@ -41,7 +45,6 @@ class ClientServiceImpTest {
     }
 
     @Test
-
     public void testThatIfClientRegistersWithInvalidPasswordFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setFirstName("ope");
@@ -51,7 +54,6 @@ class ClientServiceImpTest {
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
         assertThrows(InvalidDetailsException.class,()-> clientService.register(registerRequest));
-
     }
     @Test
     public void testThatIfClientRegistersWithInvalidEmailFormatThrowsAndException(){
@@ -63,9 +65,7 @@ class ClientServiceImpTest {
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
         assertThrows(InvalidDetailsException.class,()-> clientService.register(registerRequest));
-
     }
-
     @Test
     public void testThatIfClientRegistersWithInvalidPhoneNumberFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
@@ -79,9 +79,6 @@ class ClientServiceImpTest {
         clientService.register(registerRequest);
         assertThrows(UserExistException.class,()-> clientService.register(registerRequest));
     }
-
-
-
     @Test
     public void testThatIfClientTriesToLoginWithWrongEmailAddressThrowsException(){
         RegisterRequest registerRequest = new RegisterRequest();
@@ -177,6 +174,5 @@ class ClientServiceImpTest {
         assertSame(BookType.ACCEPTED,book.getAcceptedProject());
 
     }
-
 
 }
