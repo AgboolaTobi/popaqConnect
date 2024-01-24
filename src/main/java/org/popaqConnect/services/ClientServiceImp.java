@@ -3,7 +3,6 @@ package org.popaqConnect.services;
 import lombok.extern.slf4j.Slf4j;
 import org.popaqConnect.data.models.Client;
 import org.popaqConnect.data.repositories.ClientRepository;
-import org.popaqConnect.data.repositories.UserRepository;
 import org.popaqConnect.dtos.requests.LoginRequest;
 import org.popaqConnect.dtos.requests.RegisterRequest;
 import org.popaqConnect.exceptions.InvalidDetailsException;
@@ -20,8 +19,7 @@ import org.springframework.stereotype.Service;
 public class ClientServiceImp implements ClientService{
     @Autowired
     ClientRepository clientRepository;
-    @Autowired
-    UserService userService;
+
 
     @Override
     public void register(RegisterRequest registerRequest) {
@@ -30,7 +28,6 @@ public class ClientServiceImp implements ClientService{
         if(!VerifyPassword.verifyEmail(registerRequest.getEmail()))throw new InvalidDetailsException("Invalid email format");
         Client newClient = Mapper.mapClient(registerRequest);
         clientRepository.save(newClient);
-        userService.save(newClient);
     }
 
     @Override
@@ -48,9 +45,7 @@ public class ClientServiceImp implements ClientService{
     }
     private boolean verifyLoginPassword(String password,String email){
         Client client = clientRepository.findByEmail(email);
-        if(client.getPassword() == password)return true;
-
-        return false;
+        return client.getPassword().equals(password);
     }
 
 

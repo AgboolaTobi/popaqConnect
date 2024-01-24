@@ -7,9 +7,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import org.popaqConnect.data.JobCategory;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
+@Document
 public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
