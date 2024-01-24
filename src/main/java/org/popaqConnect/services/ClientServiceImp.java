@@ -1,12 +1,30 @@
 package org.popaqConnect.services;
 
-import lombok.extern.slf4j.Slf4j;
+
 import org.popaqConnect.data.models.Client;
+import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.repositories.ClientRepository;
+<<<<<<< HEAD
 import org.popaqConnect.dtos.requests.LoginRequest;
+=======
+>>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc
 import org.popaqConnect.dtos.requests.RegisterRequest;
+import org.popaqConnect.dtos.requests.SearchByDRopTitleRequest;
+
+import lombok.extern.slf4j.Slf4j;
+import org.popaqConnect.data.models.Book;
+import org.popaqConnect.data.models.Client;
+import org.popaqConnect.data.models.ServiceProvider;
+import org.popaqConnect.data.repositories.ClientRepository;
+
+import org.popaqConnect.dtos.requests.RegisterRequest;
+
+import org.popaqConnect.dtos.requests.*;
+import org.popaqConnect.dtos.response.BookResponse;
+
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.InvalidLoginException;
+import org.popaqConnect.exceptions.UnAvailableException;
 import org.popaqConnect.exceptions.UserExistException;
 import org.popaqConnect.utils.Mapper;
 import org.popaqConnect.utils.VerifyPassword;
@@ -14,11 +32,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import java.util.Optional;
+
+
 @Service
-@Slf4j
 public class ClientServiceImp implements ClientService{
     @Autowired
     ClientRepository clientRepository;
+<<<<<<< HEAD
+=======
+    @Autowired
+    JobService jobService;
+    @Autowired
+    ServiceProviderServices servicePriovider;
+    @Autowired
+    BookServices bookServices;
+    @Autowired
+    AdminService adminService;
+>>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc
 
 
     @Override
@@ -29,23 +62,66 @@ public class ClientServiceImp implements ClientService{
         Client newClient = Mapper.mapClient(registerRequest);
         clientRepository.save(newClient);
     }
+    @Override
+    public List<Job> searchBYDropTitle(SearchByDRopTitleRequest search) {
+        Client client = clientRepository.findByEmail(search.getEmail());
+        List<Job> jobList = jobService.findByTitle(search.getTitle());
+        clientRepository.save(client);
+        return jobList;
+    }
+
 
     @Override
     public void login(LoginRequest loginRequest) {
         Client client = clientRepository.findByEmail(loginRequest.clientEmail);
         if (client == null) throw new InvalidLoginException("Invalid login details");
-        if(!verifyLoginPassword(loginRequest.getPassword(), loginRequest.getClientEmail()))throw new InvalidLoginException("Invalid login details");
+        verifyLoginPassword(loginRequest.getPassword(),loginRequest.getClientEmail());
         client.setLoginStatus(true);
+
         clientRepository.save(client);
     }
 
+    @Override
+    public BookResponse bookServices(BookRequest bookRequest) {
+        Client client = clientRepository.findByEmail(bookRequest.getClientEmail());
+        if(client == null)throw new UserExistException("User doesn't exist");
+        Optional<ServiceProvider> servicePriovider1 = servicePriovider.findUser(bookRequest.getServiceProviderEmail());
+        if(servicePriovider1.isEmpty())throw new UserExistException("User doesn't exist");
+        if(!servicePriovider1.get().isAvailable())throw new UnAvailableException("User is not available");
+        String bookingId = bookServices.save(bookRequest);
+        BookResponse bookResponse = new BookResponse();
+        adminService.sendClientBookingRequestEmail(bookRequest,bookingId);
+        bookResponse.setMessage("your booking id is " + bookingId);
+        return  bookResponse;
+
+    }
+
+    @Override
+    public List<Book> findAllBookingRequest(String mail) {
+        Client client = clientRepository.findByEmail(mail);
+        if(!userExist(mail))throw new UserExistException("User doesn't Exist");
+        return bookServices.findUserBookRequest(client.getEmail());
+    }
+
+    @Override
+    public Book findABookRequest(FindABookRequest findABookRequest) {
+        Client client = clientRepository.findByEmail(findABookRequest.getEmail());
+        if(!userExist(findABookRequest.getEmail()))throw new UserExistException("user doesn't exist");
+        Book booking = bookServices.findABookRequest(findABookRequest.getBookId(), findABookRequest.getEmail());
+        return booking;
+    }
     private boolean userExist(String email){
         Client client = clientRepository.findByEmail(email);
         return client!=null;
     }
-    private boolean verifyLoginPassword(String password,String email){
+    private void verifyLoginPassword(String password,String email){
         Client client = clientRepository.findByEmail(email);
+<<<<<<< HEAD
         return client.getPassword().equals(password);
+=======
+        if(!client.getPassword().equals(password))throw new InvalidLoginException("Invalid login details");
+
+>>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc
     }
 
 
