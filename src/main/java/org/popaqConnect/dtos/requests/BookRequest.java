@@ -1,7 +1,7 @@
 package org.popaqConnect.dtos.requests;
 
 import lombok.Data;
-import org.popaqConnect.data.models.BookType;
+import org.popaqConnect.data.BookType;
 
 @Data
 public class BookRequest {

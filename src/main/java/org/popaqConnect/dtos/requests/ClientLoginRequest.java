@@ -3,7 +3,7 @@ package org.popaqConnect.dtos.requests;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
+public class ClientLoginRequest {
     private String email;
     private String password;
 }
