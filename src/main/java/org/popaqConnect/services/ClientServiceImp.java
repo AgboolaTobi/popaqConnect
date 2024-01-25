@@ -7,7 +7,6 @@ import org.popaqConnect.dtos.requests.RegisterRequest;
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.UserExistException;
 import org.popaqConnect.services.ServiceInterfaces.ClientService;
-import org.popaqConnect.services.ServiceInterfaces.UserService;
 import org.popaqConnect.utils.Mapper;
 import org.popaqConnect.utils.VerifyPassword;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Service;
 public class ClientServiceImp implements ClientService {
     @Autowired
     ClientRepository clientRepository;
-    @Autowired
-    UserService userService;
 
     @Override
     public void register(RegisterRequest registerRequest) {

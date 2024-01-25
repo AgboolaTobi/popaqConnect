@@ -1,11 +1,17 @@
 package org.popaqConnect.services;
 
 import org.popaqConnect.data.models.Admin;
-import org.popaqConnect.data.repositories.AdminRespository;
+import org.popaqConnect.data.repositories.AdminRepository;
 import org.popaqConnect.dtos.requests.AdminLoginRequest;
 import org.popaqConnect.dtos.requests.AdminRequest;
+import org.popaqConnect.exceptions.AdminAlreadyExists;
+import org.popaqConnect.exceptions.AdminNotFoundException;
+import org.popaqConnect.exceptions.InvalidDetailsException;
+import org.popaqConnect.exceptions.InvalidLoginException;
 import org.popaqConnect.services.ServiceInterfaces.AdminService;
+import org.popaqConnect.utils.VerifyPassword;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,67 +19,85 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
 
     @Autowired
-    private AdminRespository adminRespository;
+    private AdminRepository adminRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
 
-    /**
-     * @param request
-     * @return
-     */
     @Override
-    public Admin createAdmin(AdminRequest request) {
-        return null;
+    public Admin createAdmin(AdminRequest adminRequest) {
+        if(userExist(adminRequest.getEmail())){
+            throw new AdminAlreadyExists("Admin already exists");
+        }
+        Admin admin = new Admin();
+
+        admin.setFirstName(adminRequest.getFirstName());
+        admin.setLastName(adminRequest.getLastName());
+        admin.setEmail(adminRequest.getEmail());
+        admin.setPhone(adminRequest.getPhone());
+        admin.setPassword( passwordEncoder.encode(adminRequest.getPassword()));
+
+        if(!VerifyPassword.verifyPassword(adminRequest.getPassword()))throw new InvalidDetailsException("weak password format");
+
+        return adminRepository.save(admin);
     }
 
-    /**
-     * @param id
-     * @return
-     */
-    @Override
-    public Admin viewAdmin(Long id) {
-        return null;
+    private boolean userExist(String email) {
+        Admin admin = adminRepository.findByEmail(email);
+        return admin != null;
     }
 
-    /**
-     * @return
-     */
+    @Override
+    public Admin viewAdmin(String id) {
+        return adminRepository.findById(id).orElseThrow(()-> new AdminNotFoundException("Admin not found!"));
+    }
+
     @Override
     public List<Admin> viewAdmins() {
-        return null;
+        return adminRepository.findAll();
     }
 
-    /**
-     * @param id
-     * @return
-     */
     @Override
-    public Admin updateAdmin(Long id) {
-        return null;
+    public Admin updateAdmin(AdminRequest request ) {
+        Admin admin = new Admin();
+        admin.setId(request.getId());
+        admin.setFirstName(request.getFirstName());
+        admin.setLastName(request.getLastName());
+        admin.setEmail(request.getEmail());
+        admin.setPhone(request.getPhone());
+        if(!VerifyPassword.verifyPassword(request.getPassword()))throw new InvalidDetailsException("weak password format");
+        return adminRepository.save(admin);
     }
-
-    /**
-     * @param id
-     */
     @Override
-    public void deleteAdmin(Long id) {
-
+    public void deleteAdmin(String id) {
+        adminRepository.deleteById(id);
     }
 
-    /**
-     * @param request
-     * @return
-     */
+
     @Override
     public Admin loginAdmin(AdminLoginRequest request) {
-        return null;
+        Admin admin = adminRepository.findByEmail(request.getEmail());
+
+        if (admin == null) throw new AdminNotFoundException("Admin not found");
+
+        if (passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
+            admin.setLoggedIn(true);
+            adminRepository.save(admin);
+            return admin;
+        } else {
+            throw new InvalidLoginException("Invalid credentials");
+        }
     }
 
-    /**
-     *
-     */
-    @Override
-    public void logoutAdmin() {
 
+    @Override
+    public void logoutAdmin(String id) {
+        Admin admin =  viewAdmin(id);
+        admin.setLoggedIn(false);
+        adminRepository.save(admin);
     }
 }
+
+

@@ -9,13 +9,15 @@ import java.util.List;
 public interface AdminService {
 
    Admin createAdmin(AdminRequest request);
-   Admin viewAdmin(Long id);
+
+   Admin viewAdmin(String id);
+
    List<Admin> viewAdmins();
-   Admin updateAdmin(Long id);
-   void deleteAdmin(Long id);
+   Admin updateAdmin(AdminRequest request);
+   void deleteAdmin(String id);
 
    Admin loginAdmin(AdminLoginRequest request);
-   void logoutAdmin();
+   void logoutAdmin(String id);
 
 
 }
