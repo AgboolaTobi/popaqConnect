@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface BookServices {
     String save(BookRequest bookRequest);
 
-    List<Book> findUserBookRequest(String id);
+    List<Book> findUserBookRequest(String userEmail);
 
     Book findABookRequest(String bookID, String userEmail);
 

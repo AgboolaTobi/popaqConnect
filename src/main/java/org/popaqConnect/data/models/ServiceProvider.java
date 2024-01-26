@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 >>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Data
 @Document
 <<<<<<< HEAD
@@ -35,4 +37,6 @@ public class ServiceProvider {
     private boolean isAvailable=true;
     private boolean isLoginStatus;
     private Job job;
+    private List<Trainee> trainees;
+    private boolean availableForTraining;
 }

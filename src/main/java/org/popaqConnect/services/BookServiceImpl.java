@@ -1,29 +1,31 @@
 package org.popaqConnect.services;
 
 import org.popaqConnect.data.models.Book;
-import org.popaqConnect.data.models.BookType;
+import org.popaqConnect.data.BookType;
 import org.popaqConnect.data.repositories.BookRepository;
 import org.popaqConnect.dtos.requests.AcceptBookingRequest;
 import org.popaqConnect.dtos.requests.BookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class BookServiceImpl implements BookServices{
-    private  int generatedNumber = 0;
+    private final String generatedNumber = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+    private final SecureRandom secureRandom = new SecureRandom();
     @Autowired
     BookRepository bookRepository;
     @Override
     public String save(BookRequest bookRequest) {
         Book book = new Book();
         String generatedId = generateBookId();
-        book.setDescription(book.getDescription());
+        book.setDescription(bookRequest.getDescription());
         book.setClientEmail(bookRequest.getClientEmail());
         book.setServiceProviderEmail(bookRequest.getServiceProviderEmail());
-        book.setTime(book.getTime());
+        book.setTime(bookRequest.getTime());
         book.setBookId(generatedId);
         bookRepository.save(book);
         return book.getBookId();
@@ -37,8 +39,8 @@ public class BookServiceImpl implements BookServices{
             if(bookingRequest.getClientEmail().equals(userEmail)) {
                 booking.add(bookingRequest);
             }
-            if(bookingRequest.getServiceProviderEmail().equals(userEmail)){
-                booking.add(bookingRequest);}
+          if(bookingRequest.getServiceProviderEmail().equals(userEmail)){
+            booking.add(bookingRequest);}
         }
         return booking;
     }
@@ -65,6 +67,12 @@ public class BookServiceImpl implements BookServices{
     }
 
     private String generateBookId(){
-        return "BK" + generatedNumber++ ;
+        String generatedValue = "";
+        for(int count = 0; count < 3; count++){
+            String number = generatedNumber.charAt(secureRandom.nextInt(62))+"";
+            generatedValue +=number;
+        }
+
+        return "BK" + generatedValue;
     }
 }
