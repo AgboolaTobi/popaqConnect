@@ -1,4 +1,4 @@
-package org.popaqConnect.services;
+package org.popaqConnect.services.client;
 
 
 import org.popaqConnect.data.models.Job;
@@ -8,7 +8,6 @@ import org.popaqConnect.data.models.Book;
 import org.popaqConnect.dtos.requests.BookRequest;
 import org.popaqConnect.dtos.requests.ClientLoginRequest;
 import org.popaqConnect.dtos.requests.FindABookRequest;
-import org.popaqConnect.dtos.requests.RegisterRequest;
 import org.popaqConnect.dtos.response.BookResponse;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public interface ClientService {
 
     BookResponse bookServices(BookRequest bookRequest);
 
-    List<Book> findAllBookingRequest(String mail);
+    List<Book> viewAllBookingHistory(String mail);
 
-    Book findABookRequest(FindABookRequest findABookRequest);
+    Book viewABookingHistory(FindABookRequest findABookRequest);
 }

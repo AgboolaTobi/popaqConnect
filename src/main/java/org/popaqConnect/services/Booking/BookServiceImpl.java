@@ -1,27 +1,25 @@
-package org.popaqConnect.services;
+package org.popaqConnect.services.Booking;
 
 import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.BookType;
 import org.popaqConnect.data.repositories.BookRepository;
 import org.popaqConnect.dtos.requests.AcceptBookingRequest;
 import org.popaqConnect.dtos.requests.BookRequest;
+import org.popaqConnect.utils.GenerateId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BookServiceImpl implements BookServices{
-    private final String generatedNumber = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-    private final SecureRandom secureRandom = new SecureRandom();
+public class BookServiceImpl implements BookServices {
     @Autowired
     BookRepository bookRepository;
     @Override
     public String save(BookRequest bookRequest) {
         Book book = new Book();
-        String generatedId = generateBookId();
+        String generatedId = "BK-" + GenerateId.generateId();
         book.setDescription(bookRequest.getDescription());
         book.setClientEmail(bookRequest.getClientEmail());
         book.setServiceProviderEmail(bookRequest.getServiceProviderEmail());
@@ -33,7 +31,7 @@ public class BookServiceImpl implements BookServices{
     }
 
     @Override
-    public List<Book> findUserBookRequest(String userEmail) {
+    public List<Book> findAllBookingRequest(String userEmail) {
         List<Book> booking = new ArrayList<>();
         for(Book bookingRequest:bookRepository.findAll()){
             if(bookingRequest.getClientEmail().equals(userEmail)) {
@@ -46,8 +44,8 @@ public class BookServiceImpl implements BookServices{
     }
 
     @Override
-    public Book findABookRequest(String bookId, String userEmail) {
-        List<Book> booking = findUserBookRequest(userEmail);
+    public Book findABookingRequest(String bookId, String userEmail) {
+        List<Book> booking = findAllBookingRequest(userEmail);
         for(Book bookRequest: booking){
             if(bookRequest.getBookId().equals(bookId)) return bookRequest;
 
@@ -57,7 +55,7 @@ public class BookServiceImpl implements BookServices{
 
     @Override
     public void setBookType(String serviceProvider, AcceptBookingRequest bookingRequest) {
-        Book bookRequest = findABookRequest(bookingRequest.getId(),serviceProvider);
+        Book bookRequest = findABookingRequest(bookingRequest.getId(),serviceProvider);
         for(BookType bookType:BookType.values()){
             if(bookType.name().toLowerCase().equalsIgnoreCase(bookingRequest.getResponse().toLowerCase())) {
                 bookRequest.setAcceptedProject(bookType);
@@ -66,13 +64,12 @@ public class BookServiceImpl implements BookServices{
         bookRepository.save(bookRequest);
     }
 
-    private String generateBookId(){
-        String generatedValue = "";
-        for(int count = 0; count < 3; count++){
-            String number = generatedNumber.charAt(secureRandom.nextInt(62))+"";
-            generatedValue +=number;
+    private List<Book> findAllBooking(){
+        List<Book> allBooking = new ArrayList<>();
+        for(Book booking : bookRepository.findAll()){
+            allBooking.add(booking);
         }
-
-        return "BK" + generatedValue;
+        return allBooking;
     }
+
 }
