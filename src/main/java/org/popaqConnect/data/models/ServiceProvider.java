@@ -20,11 +20,9 @@ public class ServiceProvider {
     @Id
 >>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc
     private String id;
-    private String firstName;
-    private String lastName;
+    private String userName;
     private String email;
     private String phoneNumber;
-    private String age;
     private String address;
 <<<<<<< HEAD
     private boolean isLoginStatus;

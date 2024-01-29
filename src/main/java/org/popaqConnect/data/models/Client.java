@@ -33,7 +33,6 @@ public class Client {
     private String password;
 =======
     private String password;
-    private boolean isLocked;
     private boolean isLoginStatus;
 
 >>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc

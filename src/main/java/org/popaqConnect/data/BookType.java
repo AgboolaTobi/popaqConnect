@@ -1,5 +1,6 @@
 package org.popaqConnect.data;
 
 public enum BookType {
-    ACCEPTED,REJECT,NOTACCEPTED,COMPLETED
+    ACCEPTED,REJECT,NOTACCEPTED,COMPLETED,CANCEL
+
 }
