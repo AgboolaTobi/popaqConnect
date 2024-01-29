@@ -46,8 +46,7 @@ class ClientServiceImpTest {
     @Test
     public void testThatIfClientRegistersWithInvalidPasswordFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("1234");
         registerRequest.setEmail("uoidhshdgtytdwgy");
         registerRequest.setAddress("yaba mowe");
@@ -57,8 +56,7 @@ class ClientServiceImpTest {
     @Test
     public void testThatIfClientRegistersWithInvalidEmailFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@");
         registerRequest.setAddress("yaba mowe");
@@ -68,26 +66,22 @@ class ClientServiceImpTest {
     @Test
     public void testThatIfClientRegistersWithInvalidPhoneNumberFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
         assertThrows(UserExistException.class,()-> clientService.register(registerRequest));
     }
     @Test
     public void testThatIfClientTriesToLoginWithWrongEmailAddressThrowsException(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -98,13 +92,11 @@ class ClientServiceImpTest {
     @Test
     public void testThatUserCantBookAServiceTheServiceOfAServiceProviderThatIsNotAvailable(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("Ope13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -113,8 +105,7 @@ class ClientServiceImpTest {
         clientService.login(loginRequest);
 
         ServiceProviderRegisterRequest registerRequests = new ServiceProviderRegisterRequest();
-        registerRequests.setFirstName("ope");
-        registerRequests.setLastName("Mr Tobi");
+        registerRequests.setUserName("ope");
         registerRequests.setPassword("PhilipOdey@75");
         registerRequests.setEmail("opeoluwaagnes@gmail.com");
         registerRequests.setAddress("yaba mowe");
@@ -146,13 +137,11 @@ class ClientServiceImpTest {
     @Test
     public void testThatWhenAClientBookARequestAndServiceProviderIsAvailabilityBecomesFalse(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("Ope13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -161,8 +150,7 @@ class ClientServiceImpTest {
         clientService.login(loginRequest);
 
         ServiceProviderRegisterRequest registerRequests = new ServiceProviderRegisterRequest();
-        registerRequests.setFirstName("ope");
-        registerRequests.setLastName("Mr Tobi");
+        registerRequests.setUserName("ope");
         registerRequests.setPassword("PhilipOdey@75");
         registerRequests.setEmail("opeoluwaagnes@gmail.com");
         registerRequests.setAddress("yaba mowe");
@@ -190,7 +178,7 @@ class ClientServiceImpTest {
         findABookRequest.setEmail("ope@gmail.com");
         findABookRequest.setBookId(bookingId.getMessage());
         Book book = clientService.findABookRequest(findABookRequest);
-        assertSame(BookType.NOTACCEPTED,book.getAcceptedProject());
+        assertSame(BookType.NOTACCEPTED,book.getProjectStatus());
 
         AcceptBookingRequest acceptBookingRequest = new AcceptBookingRequest();
         acceptBookingRequest.setId(bookingId.getMessage());
@@ -199,8 +187,9 @@ class ClientServiceImpTest {
         serviceProviderServices.acceptClientBookRequest(acceptBookingRequest);
 
         book = clientService.findABookRequest(findABookRequest);
-        assertSame(BookType.ACCEPTED,book.getAcceptedProject());
+        assertSame(BookType.ACCEPTED,book.getProjectStatus());
 
     }
+
 
 }

@@ -45,7 +45,6 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         if (!serviceProvider.get().getPassword().equals(loginRequest.getPassword())) throw new InvalidDetailsException("Invalid Login Details!!");
         serviceProvider.get().setLoginStatus(true);
         providerRepository.save(serviceProvider.get());
-
     }
 
     private boolean isLocked(String email){
@@ -72,8 +71,43 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         adminService.sendAcceptRequest(bookingRequest.getId(),book.getClientEmail());
     }
 
+    @Override
+    public void completeJobStatus(CompleteJobRequest completeJobRequest) {
+        bookServices.completeJobStatus(completeJobRequest);
+    }
+
+    @Override
+    public void cancelClientBookRequest(CancelBookingRequest cancelBookingRequest) {
+        bookServices.cancelBookRequest(cancelBookingRequest);
+    }
+
+    @Override
+    public void updateDetails(UpdateProfileRequest updateProfileRequest) {
+        Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(updateProfileRequest.getPreviousEmail());
+        userExist(updateProfileRequest.getPreviousEmail());
+        if (serviceProvider.isEmpty()) throw new InvalidDetailsException("User Does not Exist!!!");
+        if (!(serviceProvider.get().getEmail().equals(updateProfileRequest.getUpdatedEmail()))){serviceProvider.get().setEmail(updateProfileRequest.getUpdatedEmail());}
+        if (!(serviceProvider.get().getPassword().equals(updateProfileRequest.getPassword()))){serviceProvider.get().setPassword(updateProfileRequest.getPassword());}
+        if (!(serviceProvider.get().getEmail().equals(updateProfileRequest.getPhoneNumber()))){serviceProvider.get().setPhoneNumber(updateProfileRequest.getPhoneNumber());}
+        if (!(serviceProvider.get().getAddress().equals(updateProfileRequest.getAddress()))){serviceProvider.get().setAddress(updateProfileRequest.getAddress());}
+        if (!(serviceProvider.get().getBioData().equals(updateProfileRequest.getBioData()))){serviceProvider.get().setBioData(updateProfileRequest.getBioData());}
+        if (!(serviceProvider.get().getJob().equals(updateProfileRequest.getJob()))) serviceProvider.get().setJob(updateProfileRequest.getJob());
+//        if ((serviceProvider.get().getUserName().equals(updateProfileRequest.getUsername()))){ serviceProvider.get().setUserName(updateProfileRequest.getUsername());}
+        if (serviceProvider.get().equals(serviceProvider.get().getChargePerHour())){ serviceProvider.get().setChargePerHour(updateProfileRequest.getChargePerHour());}
+        if (serviceProvider.get().equals(serviceProvider.get().isAvailableForTraining())){ serviceProvider.get().setAvailableForTraining(updateProfileRequest.isAvailableForTraining());}
+        providerRepository.save(serviceProvider.get());
+    }
+
+    @Override
+    public void logout(String email) {
+        Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(email);
+        if (serviceProvider.isEmpty()) throw new InvalidDetailsException("Invalid details please try again !!!");
+        serviceProvider.get().setLoginStatus(false);
+        providerRepository.save(serviceProvider.get());
+    }
+
     private void userExist(String email){
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(email);
-       if(serviceProvider.isEmpty())throw new  UserExistException("User doesn't exist");
+        if(serviceProvider.isEmpty())throw new  UserExistException("User doesn't exist");
     }
 }

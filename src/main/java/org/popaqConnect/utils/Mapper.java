@@ -8,21 +8,17 @@ public class  Mapper {
 
     public static Client mapClient(RegisterRequest registerRequest){
         Client client = new Client();
-        client.setFirstName(registerRequest.getFirstName());
-        client.setLastName(registerRequest.getLastName());
+        client.setFirstName(registerRequest.getUserName());
         client.setEmail(registerRequest.getEmail());
         client.setPassword(registerRequest.getPassword());
         client.setAddress(registerRequest.getAddress());
         client.setPhoneNumber(registerRequest.getPhoneNumber());
-        client.setAge(registerRequest.getAge());
         client.setPassword(registerRequest.getPassword());
         return client;
     }
     public static Trainee mapTrainee(RegisterRequest registerRequest) {
         Trainee trainee = new Trainee();
-        trainee.setFirstName(registerRequest.getFirstName());
-        trainee.setLastName(registerRequest.getLastName());
-        trainee.setAge(registerRequest.getAge());
+        trainee.setFirstName(registerRequest.getUserName());
         trainee.setPhoneNumber(registerRequest.getPhoneNumber());
         trainee.setAddress(registerRequest.getAddress());
         trainee.setEmail(registerRequest.getEmail());
@@ -53,12 +49,10 @@ public class  Mapper {
 
     public static ServiceProvider mapServiceProvider(RegisterRequest registerRequest) {
         ServiceProvider serviceProvider = new ServiceProvider();
-        serviceProvider.setFirstName(registerRequest.getFirstName());
-        serviceProvider.setLastName(registerRequest.getLastName());
+        serviceProvider.setUserName(registerRequest.getUserName());
         serviceProvider.setEmail(registerRequest.getEmail());
         serviceProvider.setAddress(registerRequest.getAddress());
         serviceProvider.setPhoneNumber(registerRequest.getPhoneNumber());
-        serviceProvider.setAge(registerRequest.getAge());
         serviceProvider.setPassword(registerRequest.getPassword());
         return serviceProvider;
     }

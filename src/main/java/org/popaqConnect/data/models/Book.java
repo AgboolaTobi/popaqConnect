@@ -11,7 +11,7 @@ public class Book{
     @Id
     private String id;
     private String description;
-    private BookType acceptedProject = BookType.NOTACCEPTED;
+    private BookType projectStatus = BookType.NOTACCEPTED;
     private String time;
     private String serviceProviderEmail;
     private String bookId;

@@ -10,11 +10,9 @@ import java.util.List;
 public class ServiceProvider {
     @Id
     private String id;
-    private String firstName;
-    private String lastName;
+    private String userName;
     private String email;
     private String phoneNumber;
-    private String age;
     private String address;
     private String password;
     private int yearsOfExperience;
