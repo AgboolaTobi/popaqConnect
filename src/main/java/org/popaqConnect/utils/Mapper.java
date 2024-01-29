@@ -4,6 +4,9 @@ import org.popaqConnect.data.models.Trainee;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.dtos.requests.EmailRequest;
 import org.popaqConnect.dtos.requests.RegisterRequest;
+import org.popaqConnect.dtos.requests.TrainingRequest;
+import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
+
 public class  Mapper {
 
     public static Client mapClient(RegisterRequest registerRequest){
@@ -35,14 +38,21 @@ public class  Mapper {
         return emailRequest;
     }
 
-    public static String bookServiceHeadingToServiceProvider(String serviceProviderEmail,String description,String time){
+    public static String bookServiceHeadingToServiceProvider(String firstName,String description,String time,String bookingId){
         String emailToServiceProvider =String.format( """
                 Hello: %s 
-                Your Service Has been Booked Kindly Look below For the description of the Client
-                 requirement
+                Your Service Has been Booked. 
+                
+                Kindly Look below For the description of the Client requirement.
+                 
+                 Job Requirement:
+                 
                  DESCRIPTION: %s
-                 Time: %s
-                Kindly login to accept the request""",serviceProviderEmail,description,time);
+                 
+                 Duration: %s
+                 
+                 BookingId: %s
+                Kindly login to accept the request""",firstName,description,time,bookingId);
         return emailToServiceProvider;
 
     }
