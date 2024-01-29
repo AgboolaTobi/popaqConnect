@@ -18,7 +18,6 @@ public class Client {
     private String age;
     private String address;
     private String password;
-    private boolean isLocked;
     private boolean isLoginStatus;
 
 }

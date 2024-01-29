@@ -8,13 +8,14 @@ import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.BookType;
 import org.popaqConnect.data.repositories.BookRepository;
-import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.BookResponse;
-import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.InvalidLoginException;
 import org.popaqConnect.exceptions.UserExistException;
+import org.popaqConnect.services.Booking.BookServices;
+import org.popaqConnect.services.client.ClientService;
+import org.popaqConnect.services.serviceProvider.ServiceProviderServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -139,7 +140,7 @@ class ClientServiceImpTest {
         bookRequest.setTime("2 hours");
         bookRequest.setClientEmail("ope@gmail.com");
         clientService.bookServices(bookRequest);
-        List<Book> clientsBooks = clientService.findAllBookingRequest("ope@gmail.com");
+        List<Book> clientsBooks = clientService.viewAllBookingHistory("ope@gmail.com");
         assertEquals(1,clientsBooks.size());
 
     }
@@ -189,17 +190,17 @@ class ClientServiceImpTest {
         FindABookRequest findABookRequest = new FindABookRequest();
         findABookRequest.setEmail("ope@gmail.com");
         findABookRequest.setBookId(bookingId.getMessage());
-        Book book = clientService.findABookRequest(findABookRequest);
+        Book book = clientService.viewABookingHistory(findABookRequest);
         assertSame(BookType.NOTACCEPTED,book.getAcceptedProject());
 
         AcceptBookingRequest acceptBookingRequest = new AcceptBookingRequest();
         acceptBookingRequest.setId(bookingId.getMessage());
         acceptBookingRequest.setEmail("opeoluwaagnes@gmail.com");
-        acceptBookingRequest.setResponse("accepted");
+        acceptBookingRequest.setResponse("reject");
         serviceProviderServices.acceptClientBookRequest(acceptBookingRequest);
 
-        book = clientService.findABookRequest(findABookRequest);
-        assertSame(BookType.ACCEPTED,book.getAcceptedProject());
+        book = clientService.viewABookingHistory(findABookRequest);
+        assertSame(BookType.REJECT,book.getAcceptedProject());
 
     }
 

@@ -1,4 +1,4 @@
-package org.popaqConnect.services;
+package org.popaqConnect.services.job;
 
 
 import org.popaqConnect.data.models.Job;
