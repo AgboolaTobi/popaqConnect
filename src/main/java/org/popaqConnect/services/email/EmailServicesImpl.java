@@ -1,7 +1,8 @@
-package org.popaqConnect.services;
+package org.popaqConnect.services.email;
 
 import org.popaqConnect.dtos.requests.EmailRequest;
 import org.popaqConnect.dtos.response.EmailResponse;
+import org.popaqConnect.services.email.EmailServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -9,7 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailServicesImpl implements EmailServices{
+public class EmailServicesImpl implements EmailServices {
     @Autowired
     JavaMailSender javaMailSender;
     @Value("ogungbeniopemipo1@gmail.com")
