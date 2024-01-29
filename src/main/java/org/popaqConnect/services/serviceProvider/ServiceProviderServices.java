@@ -30,4 +30,12 @@ public interface ServiceProviderServices {
     void removeUser(String traineeEmail, String trainerEmail);
 
     void cancleRequest(CancelServiceProviderRequest cancelRequest);
+
+    void completeJobStatus(CompleteJobRequest completeJobRequest);
+
+    void cancelClientBookRequest(CancelBookingRequest cancelBookingRequest);
+
+    void logout(String email);
+
+    void updateDetails(UpdateProfileRequest updateProfileRequest);
 }

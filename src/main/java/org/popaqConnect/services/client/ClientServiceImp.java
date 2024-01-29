@@ -79,7 +79,7 @@ public class ClientServiceImp implements ClientService {
         if(!serviceProvider1.get().isAvailable())throw new UnAvailableException("User is not available");
         String bookingId = bookServices.save(bookRequest);
         BookResponse bookResponse = new BookResponse();
-        adminService.sendClientBookingRequestEmail(servicePriovider1.get().getFirstName(),bookRequest,bookingId);
+        adminService.sendClientBookingRequestEmail(serviceProvider1.get().getUserName(),bookRequest,bookingId);
         bookResponse.setMessage(bookingId);
         return  bookResponse;
 

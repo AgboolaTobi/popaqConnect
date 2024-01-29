@@ -57,13 +57,7 @@ public class  Mapper {
 
     }
 
-    public static ServiceProvider mapServiceProvider(RegisterRequest registerRequest) {
-        ServiceProvider serviceProvider = new ServiceProvider();
-        serviceProvider.setUserName(registerRequest.getUserName());
-        serviceProvider.setEmail(registerRequest.getEmail());
-        serviceProvider.setAddress(registerRequest.getAddress());
-        serviceProvider.setPhoneNumber(registerRequest.getPhoneNumber());
-        serviceProvider.setPassword(registerRequest.getPassword());
-        return serviceProvider;
+    public static String trainingApplicationEmail(String firstName, String courseCode, TrainingRequest request) {
+      return null;
     }
 }

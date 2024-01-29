@@ -178,10 +178,10 @@ class ClientServiceImpTest {
         FindABookRequest findABookRequest = new FindABookRequest();
         findABookRequest.setEmail("ope@gmail.com");
         findABookRequest.setBookId(bookingId.getMessage());
-        Book book = clientService.findABookRequest(findABookRequest);
-        assertSame(BookType.NOTACCEPTED,book.getProjectStatus());
         Book book = clientService.viewABookingHistory(findABookRequest);
-        assertSame(BookType.NOTACCEPTED,book.getAcceptedProject());
+        assertSame(BookType.NOTACCEPTED,book.getProjectStatus());
+        book = clientService.viewABookingHistory(findABookRequest);
+        assertSame(BookType.NOTACCEPTED,book.getProjectStatus());
 
         AcceptBookingRequest acceptBookingRequest = new AcceptBookingRequest();
         acceptBookingRequest.setId(bookingId.getMessage());
@@ -189,10 +189,10 @@ class ClientServiceImpTest {
         acceptBookingRequest.setResponse("reject");
         serviceProviderServices.acceptClientBookRequest(acceptBookingRequest);
 
-        book = clientService.findABookRequest(findABookRequest);
+        book = clientService.viewABookingHistory(findABookRequest);
         assertSame(BookType.ACCEPTED,book.getProjectStatus());
         book = clientService.viewABookingHistory(findABookRequest);
-        assertSame(BookType.REJECT,book.getAcceptedProject());
+        assertSame(BookType.REJECT,book.getProjectStatus());
 
     }
 

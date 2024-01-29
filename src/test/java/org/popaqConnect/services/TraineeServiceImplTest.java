@@ -99,6 +99,7 @@ class TraineeServiceImplTest {
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("09089447913");
         traineeService.register(registerRequest);
+
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("ope@gmail.com");
         loginRequest.setPassword("Iniestajnr1");
@@ -108,13 +109,11 @@ class TraineeServiceImplTest {
     @Test
     public void testThatWhenATraineeApplyToBeTrained(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("Iniestajnr1");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("09089447913");
-        registerRequest.setAge("25 years");
         traineeService.register(registerRequest);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("ope@gmail.com");
@@ -122,8 +121,7 @@ class TraineeServiceImplTest {
         traineeService.login(loginRequest);
 
         ServiceProviderRegisterRequest registerRequests = new ServiceProviderRegisterRequest();
-        registerRequests.setFirstName("ope");
-        registerRequests.setLastName("Mr Tobi");
+        registerRequests.setUserName("Mr tobi");
         registerRequests.setPassword("PhilipOdey@75");
         registerRequests.setEmail("opeoluwaagnes@gmail.com");
         registerRequests.setAddress("yaba mowe");
@@ -159,13 +157,11 @@ class TraineeServiceImplTest {
     @Test
     public void testThatWhenTraineeSearchForAvailableTrainerIfNoOneIsAvailableListSizeIsZero(){
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("ope");
         registerRequest.setPassword("Iniestajnr1");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("09089447913");
-        registerRequest.setAge("25 years");
         traineeService.register(registerRequest);
 
 
@@ -175,8 +171,7 @@ class TraineeServiceImplTest {
         traineeService.login(loginRequest);
 
         ServiceProviderRegisterRequest registerRequests = new ServiceProviderRegisterRequest();
-        registerRequests.setFirstName("ope");
-        registerRequests.setLastName("Mr Tobi");
+        registerRequests.setUserName("Mr tobi");
         registerRequests.setPassword("PhilipOdey@75");
         registerRequests.setEmail("opeoluwaagnes@gmail.com");
         registerRequests.setAddress("yaba mowe");
@@ -200,13 +195,11 @@ class TraineeServiceImplTest {
     @Test
     public void testThatWhenTraineeCancelCourseCourseStatusChangeToCancelled(){
         RegisterRequest request = new RegisterRequest();
-        request.setFirstName("ope");
-        request.setLastName("Mr Tobi");
+       request.setUserName("philip");
         request.setPassword("Iniestajnr1");
         request.setEmail("ope@gmail.com");
         request.setAddress("yaba mowe");
         request.setPhoneNumber("09089447913");
-        request.setAge("25 years");
         traineeService.register(request);
 
 
@@ -216,8 +209,7 @@ class TraineeServiceImplTest {
         traineeService.login(loginRequests);
 
         ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
-        registerRequest.setFirstName("ope");
-        registerRequest.setLastName("Mr Tobi");
+        registerRequest.setUserName("Mr tobi");
         registerRequest.setPassword("PhilipOdey@75");
         registerRequest.setEmail("philipodey75@gmail.com");
         registerRequest.setAddress("yaba mowe");

@@ -7,6 +7,7 @@ import org.popaqConnect.dtos.requests.AcceptBookingRequest;
 import org.popaqConnect.dtos.requests.BookRequest;
 import org.popaqConnect.dtos.requests.CancelBookingRequest;
 import org.popaqConnect.dtos.requests.CompleteJobRequest;
+import org.popaqConnect.exceptions.BookingRequestException;
 import org.popaqConnect.utils.GenerateId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class BookServiceImpl implements BookServices {
 
     @Override
         public void completeJobStatus(CompleteJobRequest completeJobRequest) {
-            Book book = findABookRequest(completeJobRequest.getBookId(), completeJobRequest.getEmail());
+            Book book = findABookingRequest(completeJobRequest.getBookId(), completeJobRequest.getEmail());
             for(BookType books : BookType.values()) {
                 if (books.name().equalsIgnoreCase(completeJobRequest.getJobStatus())) {
                     book.setProjectStatus(books);
@@ -79,28 +80,12 @@ public class BookServiceImpl implements BookServices {
 
     @Override
     public void cancelBookRequest(CancelBookingRequest cancelBookingRequest) {
-        Book findBookRequest = findABookRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
-        for (BookType bookRequestUpdate : BookType.values()) {
-            if (bookRequestUpdate.name().equalsIgnoreCase(cancelBookingRequest.getJobStatus())) {
-                findBookRequest.setProjectStatus(bookRequestUpdate);
-            }
-        }
+        Book findBookRequest = findABookingRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
+        if(findBookRequest == null)throw new BookingRequestException("Invalid details");
+        findBookRequest.setProjectStatus(BookType.CANCEL);
         bookRepository.save(findBookRequest);
 
     }
 
-
-    private String generateBookId(){
-        String generatedValue = "";
-        for(int count = 0; count < 3; count++){
-            String number = generatedNumber.charAt(secureRandom.nextInt(62))+"";
-            generatedValue +=number;
-    private List<Book> findAllBooking(){
-        List<Book> allBooking = new ArrayList<>();
-        for(Book booking : bookRepository.findAll()){
-            allBooking.add(booking);
-        }
-        return allBooking;
-    }
 
 }

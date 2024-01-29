@@ -63,7 +63,7 @@ public class TraineeServiceImpl implements TraineeService {
         if(serviceProvider.isEmpty())throw new UserExistException("Trainer doesn't exist");
         if(!serviceProvider.get().isAvailableForTraining())throw new TrainingException("Trainer is not open for training");
         ApplyForTrainingResponse courseCode = applicationService.setupCourseApplication(request);
-        adminService.sendTraineeApplicationRequest(serviceProvider.get().getFirstName(),courseCode.getMessage(),request);
+        adminService.sendTraineeApplicationRequest(serviceProvider.get().getUserName(),courseCode.getMessage(),request);
         return courseCode;
 
     }
