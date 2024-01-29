@@ -30,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
         EmailRequest emailRequest;
         String subject = "Response on " + bookingId;
         String description;
-        if (book.getAcceptedProject() == BookType.ACCEPTED) {
+        if (book.getProjectStatus() == BookType.ACCEPTED) {
             description = "Your booking request Has Been accepted, You can contact " +
                     book.getServiceProviderEmail();
         }

@@ -8,8 +8,6 @@ import org.popaqConnect.dtos.requests.ServiceProviderRegisterRequest;
 public class ServiceProviderMapper {
     public static ServiceProvider serviceProviderMap(ServiceProviderRegisterRequest registerRequest){
         ServiceProvider serviceProvider = new ServiceProvider();
-        serviceProvider.setFirstName(registerRequest.getFirstName());
-        serviceProvider.setLastName(registerRequest.getLastName());
         serviceProvider.setEmail(registerRequest.getEmail());
         serviceProvider.setAddress(registerRequest.getAddress());
         serviceProvider.setBioData(registerRequest.getBioData());

@@ -5,6 +5,9 @@ import org.popaqConnect.data.BookType;
 import org.popaqConnect.data.repositories.BookRepository;
 import org.popaqConnect.dtos.requests.AcceptBookingRequest;
 import org.popaqConnect.dtos.requests.BookRequest;
+import org.popaqConnect.dtos.requests.CancelBookingRequest;
+import org.popaqConnect.dtos.requests.CompleteJobRequest;
+import org.popaqConnect.exceptions.BookingRequestException;
 import org.popaqConnect.utils.GenerateId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +50,7 @@ public class BookServiceImpl implements BookServices {
     public Book findABookingRequest(String bookId, String userEmail) {
         List<Book> booking = findAllBookingRequest(userEmail);
         for(Book bookRequest: booking){
-            if(bookRequest.getBookId().equals(bookId)) return bookRequest;
+            if(bookRequest.getBookId().equalsIgnoreCase(bookId)) return bookRequest;
 
         }
         return null;
@@ -57,19 +60,32 @@ public class BookServiceImpl implements BookServices {
     public void setBookType(String serviceProvider, AcceptBookingRequest bookingRequest) {
         Book bookRequest = findABookingRequest(bookingRequest.getId(),serviceProvider);
         for(BookType bookType:BookType.values()){
-            if(bookType.name().toLowerCase().equalsIgnoreCase(bookingRequest.getResponse().toLowerCase())) {
-                bookRequest.setAcceptedProject(bookType);
+            if(bookType.name().equalsIgnoreCase(bookingRequest.getResponse().toLowerCase())) {
+                bookRequest.setProjectStatus(bookType);
             }
         }
         bookRepository.save(bookRequest);
     }
 
-    private List<Book> findAllBooking(){
-        List<Book> allBooking = new ArrayList<>();
-        for(Book booking : bookRepository.findAll()){
-            allBooking.add(booking);
+    @Override
+        public void completeJobStatus(CompleteJobRequest completeJobRequest) {
+            Book book = findABookingRequest(completeJobRequest.getBookId(), completeJobRequest.getEmail());
+            for(BookType books : BookType.values()) {
+                if (books.name().equalsIgnoreCase(completeJobRequest.getJobStatus())) {
+                    book.setProjectStatus(books);
+                }
+            }
+            bookRepository.save(book);
         }
-        return allBooking;
+
+    @Override
+    public void cancelBookRequest(CancelBookingRequest cancelBookingRequest) {
+        Book findBookRequest = findABookingRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
+        if(findBookRequest == null)throw new BookingRequestException("Invalid details");
+        findBookRequest.setProjectStatus(BookType.CANCEL);
+        bookRepository.save(findBookRequest);
+
     }
+
 
 }

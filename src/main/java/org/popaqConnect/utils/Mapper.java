@@ -11,21 +11,17 @@ public class  Mapper {
 
     public static Client mapClient(RegisterRequest registerRequest){
         Client client = new Client();
-        client.setFirstName(registerRequest.getFirstName());
-        client.setLastName(registerRequest.getLastName());
+        client.setFirstName(registerRequest.getUserName());
         client.setEmail(registerRequest.getEmail());
         client.setPassword(registerRequest.getPassword());
         client.setAddress(registerRequest.getAddress());
         client.setPhoneNumber(registerRequest.getPhoneNumber());
-        client.setAge(registerRequest.getAge());
         client.setPassword(registerRequest.getPassword());
         return client;
     }
     public static Trainee mapTrainee(RegisterRequest registerRequest) {
         Trainee trainee = new Trainee();
-        trainee.setFirstName(registerRequest.getFirstName());
-        trainee.setLastName(registerRequest.getLastName());
-        trainee.setAge(registerRequest.getAge());
+        trainee.setFirstName(registerRequest.getUserName());
         trainee.setPhoneNumber(registerRequest.getPhoneNumber());
         trainee.setAddress(registerRequest.getAddress());
         trainee.setEmail(registerRequest.getEmail());
@@ -62,26 +58,6 @@ public class  Mapper {
     }
 
     public static String trainingApplicationEmail(String firstName, String courseCode, TrainingRequest request) {
-            String emailToServiceProvider =String.format( """
-                    Dear %s 
-                        I hope this email finds you well. 
-                        We are pleased to inform you that a new trainee has applied for training. 
-                        
-                        Here are the details:
-                                        
-                        Trainee Information:
-                        - Email:  %s
-                        
-                        - About Trainee: %s
-                        
-                        - Preferred Start Date: %s
-                        
-                        - Preferred End Date:  %s
-                        
-                        - courseCode:  %s
-                    
-                    Kindly login to accept the request""",firstName,request.getTraineeEmail(),request.getAboutYou(),request.getStartDate(),request.getEndDate(),courseCode);
-            return emailToServiceProvider;
-
+      return null;
     }
 }

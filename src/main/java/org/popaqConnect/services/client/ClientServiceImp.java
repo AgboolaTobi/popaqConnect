@@ -36,7 +36,7 @@ public class ClientServiceImp implements ClientService {
     @Autowired
     JobService jobService;
     @Autowired
-    ServiceProviderServices servicePriovider;
+    ServiceProviderServices serviceProvider;
     @Autowired
     BookServices bookServices;
     @Autowired
@@ -74,12 +74,12 @@ public class ClientServiceImp implements ClientService {
         Client client = clientRepository.findByEmail(bookRequest.getClientEmail());
         if(client == null)throw new UserExistException("User doesn't exist");
         if(!userExist(client.getEmail()))throw new UserExistException("User doesn't Exist");
-        Optional<ServiceProvider> servicePriovider1 = servicePriovider.findUser(bookRequest.getServiceProviderEmail());
-        if(servicePriovider1.isEmpty())throw new UserExistException("User doesn't exist");
-        if(!servicePriovider1.get().isAvailable())throw new UnAvailableException("User is not available");
+        Optional<ServiceProvider> serviceProvider1 = serviceProvider.findUser(bookRequest.getServiceProviderEmail());
+        if(serviceProvider1.isEmpty())throw new UserExistException("User doesn't exist");
+        if(!serviceProvider1.get().isAvailable())throw new UnAvailableException("User is not available");
         String bookingId = bookServices.save(bookRequest);
         BookResponse bookResponse = new BookResponse();
-        adminService.sendClientBookingRequestEmail(servicePriovider1.get().getFirstName(),bookRequest,bookingId);
+        adminService.sendClientBookingRequestEmail(serviceProvider1.get().getUserName(),bookRequest,bookingId);
         bookResponse.setMessage(bookingId);
         return  bookResponse;
 
