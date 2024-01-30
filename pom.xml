@@ -29,7 +29,6 @@
             <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
-<<<<<<< HEAD
 
 
 
@@ -41,20 +40,6 @@
         </dependency>
 
 
-=======
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>3.1.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>3.2.1</version>
-        </dependency>
->>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -69,23 +54,13 @@
             <version>3.2.1</version>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>3.2.1</version>
-            <scope>compile</scope>
-        </dependency>
 
-
-=======
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
             <version>3.2.1</version>
         </dependency>
->>>>>>> c27a60656f073947c54bf5ed215985e256b3c8dc
     </dependencies>
 
 </project>

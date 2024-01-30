@@ -11,7 +11,7 @@ public class  Mapper {
 
     public static Client mapClient(RegisterRequest registerRequest){
         Client client = new Client();
-        client.setFirstName(registerRequest.getUserName());
+        client.setUserName(registerRequest.getUserName());
         client.setEmail(registerRequest.getEmail());
         client.setPassword(registerRequest.getPassword());
         client.setAddress(registerRequest.getAddress());

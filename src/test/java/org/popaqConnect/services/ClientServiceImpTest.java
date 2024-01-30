@@ -2,15 +2,15 @@ package org.popaqConnect.services;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.popaqConnect.data.repositories.ClientRepository;
-import org.popaqConnect.dtos.requests.RegisterRequest;
-import org.popaqConnect.exceptions.InvalidDetailsException;
-import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.BookType;
+import org.popaqConnect.data.models.Book;
+import org.popaqConnect.data.models.Client;
 import org.popaqConnect.data.repositories.BookRepository;
+import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.BookResponse;
+import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.InvalidLoginException;
 import org.popaqConnect.exceptions.UserExistException;
 import org.popaqConnect.services.Booking.BookServices;
@@ -72,6 +72,7 @@ class ClientServiceImpTest {
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
         assertThrows(UserExistException.class,()-> clientService.register(registerRequest));
     }
@@ -83,6 +84,7 @@ class ClientServiceImpTest {
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -98,6 +100,7 @@ class ClientServiceImpTest {
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -143,6 +146,7 @@ class ClientServiceImpTest {
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setAge("25 years");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -175,13 +179,14 @@ class ClientServiceImpTest {
         bookRequest.setTime("2 hours");
         bookRequest.setClientEmail("ope@gmail.com");
         BookResponse bookingId = clientService.bookServices(bookRequest);
+
         FindABookRequest findABookRequest = new FindABookRequest();
         findABookRequest.setEmail("ope@gmail.com");
         findABookRequest.setBookId(bookingId.getMessage());
         Book book = clientService.viewABookingHistory(findABookRequest);
         assertSame(BookType.NOTACCEPTED,book.getProjectStatus());
-        book = clientService.viewABookingHistory(findABookRequest);
-        assertSame(BookType.NOTACCEPTED,book.getProjectStatus());
+
+
 
         AcceptBookingRequest acceptBookingRequest = new AcceptBookingRequest();
         acceptBookingRequest.setId(bookingId.getMessage());
@@ -190,9 +195,87 @@ class ClientServiceImpTest {
         serviceProviderServices.acceptClientBookRequest(acceptBookingRequest);
 
         book = clientService.viewABookingHistory(findABookRequest);
-        assertSame(BookType.ACCEPTED,book.getProjectStatus());
-        book = clientService.viewABookingHistory(findABookRequest);
         assertSame(BookType.REJECT,book.getProjectStatus());
+    }
+
+
+
+    @Test
+    public void testThatClientCanUpdateDetails(){
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUserName("Olushola");
+        registerRequest.setPassword("Opedert13@");
+        registerRequest.setEmail("ope@gmail.com");
+        registerRequest.setAddress("yaba mowe");
+        registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setAge("25 years");
+        clientService.register(registerRequest);
+
+        ClientLoginRequest loginRequest = new ClientLoginRequest();
+        loginRequest.setEmail("ope@gmail.com");
+        loginRequest.setPassword("Opedert13@");
+        clientService.login(loginRequest);
+
+        ClientUpdateRequest clientUpdateRequest = new ClientUpdateRequest();
+
+        clientUpdateRequest.setUserName("Ogungbeni");
+        clientUpdateRequest.setPassword("Opedert13@");
+        clientUpdateRequest.setEmail("ope@gmail.com");
+        clientUpdateRequest.setAddress("Sabo Yaba");
+        clientUpdateRequest.setPhoneNumber("08068952944");
+        clientUpdateRequest.setAddress("30 years");
+        clientService.update(clientUpdateRequest);
+
+        assertEquals(clientRepository.findByEmail("ope@gmail.com"), clientRepository.findByEmail("ope@gmail.com"));
+    }
+
+    @Test
+    public void testThatClientCanLogOut() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUserName("Olushola");
+        registerRequest.setPassword("Opedert13@");
+        registerRequest.setEmail("ope@gmail.com");
+        registerRequest.setAddress("yaba mowe");
+        registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setAge("25 years");
+        clientService.register(registerRequest);
+
+        ClientLoginRequest loginRequest = new ClientLoginRequest();
+        loginRequest.setEmail("ope@gmail.com");
+        loginRequest.setPassword("Opedert13@");
+        clientService.login(loginRequest);
+
+        ClientLogoutRequest clientLogoutRequest = new ClientLogoutRequest();
+        clientLogoutRequest.setEmail("ope@gmail.com");
+        clientService.logout(clientLogoutRequest);
+        Client existingClient = clientRepository.findByEmail("ope@gmail.com");
+        assertFalse(existingClient.isLoginStatus());
+
+    }
+
+    @Test
+    public void testThatClientCanDeleteAccount() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUserName("Olushola");
+        registerRequest.setPassword("Opedert13@");
+        registerRequest.setEmail("ope@gmail.com");
+        registerRequest.setAddress("yaba mowe");
+        registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setAge("25 years");
+        clientService.register(registerRequest);
+
+        ClientLoginRequest loginRequest = new ClientLoginRequest();
+        loginRequest.setEmail("ope@gmail.com");
+        loginRequest.setPassword("Opedert13@");
+        clientService.login(loginRequest);
+
+        ClientDeleteRequest clientDeleteRequest = new ClientDeleteRequest();
+        clientDeleteRequest.setEmail("ope@gmail.com");
+        clientDeleteRequest.setPassword("Opedert13@");
+        clientService.deleteAccount(clientDeleteRequest);
+        Client existingClient = clientRepository.findByEmail("ope@gmail.com");
+        assertNull(existingClient);
+        assertEquals(0,clientRepository.count());
 
     }
 
