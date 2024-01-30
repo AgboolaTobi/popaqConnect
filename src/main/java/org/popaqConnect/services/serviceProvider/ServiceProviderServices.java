@@ -29,7 +29,7 @@ public interface ServiceProviderServices {
 
     void removeUser(String traineeEmail, String trainerEmail);
 
-    void cancleRequest(CancelServiceProviderRequest cancelRequest);
+    void cancelRequest(CancelServiceProviderRequest cancelRequest);
 
     void completeJobStatus(CompleteJobRequest completeJobRequest);
 
@@ -38,4 +38,7 @@ public interface ServiceProviderServices {
     void logout(String email);
 
     void updateDetails(UpdateProfileRequest updateProfileRequest);
+
+    void deleteAccount(String email);
+
 }
