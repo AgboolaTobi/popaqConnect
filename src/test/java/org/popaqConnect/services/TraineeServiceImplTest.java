@@ -267,7 +267,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    public void register_Trainee_login_Trainee_Update_TraineeStatusTryLoginWithUpdatedDetailsTest() {
+    public void register_Trainee_login_Trainee_UpdateDetails_TraineeStatusTryLoginWithUpdatedDetailsTest() {
         RegisterRequest request = new RegisterRequest();
         request.setUserName("philip");
         request.setPassword("Iniestajnr1");

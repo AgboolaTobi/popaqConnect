@@ -169,14 +169,14 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(updateProfileRequest.getPreviousEmail());
         userExist(updateProfileRequest.getPreviousEmail());
         if (serviceProvider.isEmpty()) throw new InvalidDetailsException("User Does not Exist!!!");
-        if (!(serviceProvider.get().getEmail() == null)){serviceProvider.get().setEmail(updateProfileRequest.getUpdatedEmail());}
-        if (!(serviceProvider.get().getPassword() == null)){serviceProvider.get().setPassword(updateProfileRequest.getPassword());}
-        if (!(serviceProvider.get().getEmail() ==  null)){serviceProvider.get().setPhoneNumber(updateProfileRequest.getPhoneNumber());}
-        if (!(serviceProvider.get().getAddress() == null)){serviceProvider.get().setAddress(updateProfileRequest.getAddress());}
-        if (!(serviceProvider.get().getBioData() == null)){serviceProvider.get().setBioData(updateProfileRequest.getBioData());}
-        if (!(serviceProvider.get().getJob() == null)) serviceProvider.get().setJob(updateProfileRequest.getJob());
-        if (!(serviceProvider.get().getUserName() == null)){ serviceProvider.get().setUserName(updateProfileRequest.getUsername());}
-//        if (serviceProvider.get().getChargePerHour()updateProfileRequest.isAvailableForTraining()){ serviceProvider.get().setChargePerHour(updateProfileRequest.getChargePerHour());}
+        if (!(updateProfileRequest.getUpdatedEmail() == null)){serviceProvider.get().setEmail(updateProfileRequest.getUpdatedEmail());}
+        if (!(updateProfileRequest.getPassword() == null)){serviceProvider.get().setPassword(updateProfileRequest.getPassword());}
+        if (!(updateProfileRequest.getPhoneNumber() ==  null)){serviceProvider.get().setPhoneNumber(updateProfileRequest.getPhoneNumber());}
+        if (!(updateProfileRequest.getAddress() == null)){serviceProvider.get().setAddress(updateProfileRequest.getAddress());}
+        if (!(updateProfileRequest.getBioData() == null)){serviceProvider.get().setBioData(updateProfileRequest.getBioData());}
+        if (!(updateProfileRequest.getJob() == null)) serviceProvider.get().setJob(updateProfileRequest.getJob());
+        if (!(updateProfileRequest.getUsername() == null)){ serviceProvider.get().setUserName(updateProfileRequest.getUsername());}
+//        if (updateProfileRequest.isAvailableForTraining())updateProfileRequest.isAvailableForTraining()){ serviceProvider.get().setChargePerHour(updateProfileRequest.getChargePerHour());}
         if (serviceProvider.get().isAvailableForTraining() != updateProfileRequest.isAvailableForTraining()){ serviceProvider.get().setAvailableForTraining(updateProfileRequest.isAvailableForTraining());}
         providerRepository.save(serviceProvider.get());
     }
@@ -189,7 +189,6 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         providerRepository.delete(serviceProvider.get());
         serviceProvider.get().setLoginStatus(false);
         providerRepository.save(serviceProvider.get());
-
     }
 
 
