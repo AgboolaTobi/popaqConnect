@@ -38,7 +38,7 @@ public class JobServiceImpl implements JobService {
             if (category1.name().equalsIgnoreCase(category)) {
                 job.setJobCategory(category1);
             }
-            job.setJobCategory(JobCategory.valueOf(category));
+            job.setJobCategory(JobCategory.valueOf(category.toUpperCase()));
         }
         return job;
     }

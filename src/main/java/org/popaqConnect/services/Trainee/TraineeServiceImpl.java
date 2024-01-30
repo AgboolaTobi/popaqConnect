@@ -77,7 +77,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void cancleCourseApplication(CancelCourseRequest cancelCourse) {
+    public void cancelCourseApplication(CancelCourseRequest cancelCourse) {
         Trainee foundTrainee = traineeRepository.findByEmail(cancelCourse.getTraineeEmail());
         if(!userExist(cancelCourse.getTraineeEmail()))throw new UserExistException("User doesn't exist");
         if(!foundTrainee.isLoginStatus())throw new AppLockedException("Kindly Login");
@@ -95,6 +95,28 @@ public class TraineeServiceImpl implements TraineeService {
         CourseApplication course = applicationService.findCourse(viewCourse.getCourseCode(),viewCourse.getTraineeEmail());
         if(course == null)throw new CourseApplicationException("invalid details");
         return course;
+    }
+
+    @Override
+    public void updateProfile(TraineeUpdateProfileRequest updateDetailRequest) {
+     Trainee trainee = traineeRepository.findByEmail(updateDetailRequest.getEmail());
+     if (!userExist(updateDetailRequest.getEmail())) throw new UserExistException(updateDetailRequest.getEmail() + " does not exist");
+     if (!(trainee.getEmail() == null)) trainee.setEmail(updateDetailRequest.getUpdatedEmail());
+     if (!(trainee.getPassword() == null)) trainee.setPassword(updateDetailRequest.getPassword());
+     if (!(trainee.getPhoneNumber() == null)) trainee.setPhoneNumber(updateDetailRequest.getPhoneNumber());
+     if (!(trainee.getAddress() == null)) trainee.setAddress(updateDetailRequest.getAddress());
+     if (!(trainee.getBioData() == null)) trainee.setBioData(updateDetailRequest.getBioData());
+     if (!(trainee.getFirstName() == null)) trainee.setFirstName(updateDetailRequest.getFirstName());
+     if (!(trainee.getLastName() == null)) trainee.setLastName(updateDetailRequest.getLastName());
+     traineeRepository.save(trainee);
+    }
+
+    @Override
+    public void logout(String email) {
+        Trainee trainee = traineeRepository.findByEmail(email);
+        if (!(userExist(email))) throw new UserExistException(email + " does not exist!!!");
+        if (userExist(email)) trainee.setLoginStatus(false);
+        traineeRepository.save(trainee);
     }
 
     private boolean userExist(String email) {
