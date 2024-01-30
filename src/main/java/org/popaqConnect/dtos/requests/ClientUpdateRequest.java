@@ -3,8 +3,8 @@ package org.popaqConnect.dtos.requests;
 import lombok.Data;
 
 @Data
-public class RegisterRequest {
-    private String UserName;
+public class ClientUpdateRequest {
+    private String userName;
     private String email;
     private String phoneNumber;
     private String address;

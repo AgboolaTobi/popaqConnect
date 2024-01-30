@@ -10,6 +10,9 @@ import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.data.repositories.JobRepository;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
+import org.popaqConnect.dtos.requests.LoginRequest;
+import org.popaqConnect.dtos.requests.ServiceProviderRegisterRequest;
+import org.popaqConnect.dtos.requests.ServiceProviderUpdateRequest;
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.BookResponse;
 import org.popaqConnect.exceptions.InvalidDetailsException;
@@ -177,7 +180,7 @@ public class ServiceProviderServiceImplTest {
       assertThrows(InvalidLoginException.class, ()->  service.login(loginRequest));
       loginRequest.setEmail("philipoddacey75@gmail.com");
       loginRequest.setPassword("Ope5y5xv@");
-      assertThrows(InvalidLoginException.class, ()->  service.login(loginRequest));
+      assertThrows(UserExistException.class, ()->  service.login(loginRequest));
    }
     @Test
    public void registerServiceProvider_WithTheRightDetails_LoginWithTheWrongPasswordThrowException() {
@@ -189,7 +192,7 @@ public class ServiceProviderServiceImplTest {
        registerRequest.setPhoneNumber("+2349019539651");
        registerRequest.setYearsOfExperience(2);
        registerRequest.setBioData("i an philip i am a software engineer");
-        registerRequest.setChargePerHour(2500.00);
+       registerRequest.setChargePerHour(2500.00);
        registerRequest.setCategory("ENGINEER");
        registerRequest.setJobTitle("Software engineer");
        service.register(registerRequest);
@@ -521,4 +524,6 @@ public class ServiceProviderServiceImplTest {
 
     }
 
+
 }
+

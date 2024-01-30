@@ -39,6 +39,7 @@ public interface ServiceProviderServices {
 
     void updateDetails(UpdateProfileRequest updateProfileRequest);
 
+
     void deleteAccount(String email);
 
 }
