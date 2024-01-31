@@ -10,8 +10,8 @@ import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
 import java.util.List;
 
 public interface TraineeService  {
-    void register(RegisterRequest registerRequest);
-    void login(LoginRequest loginRequest);
+    void register(TraineeRegisterRequest traineeRegisterRequest);
+    void login(TraineeLoginRequest traineeLoginRequest);
 
     ApplyForTrainingResponse applyForTraining(TrainingRequest traineeApplication);
 

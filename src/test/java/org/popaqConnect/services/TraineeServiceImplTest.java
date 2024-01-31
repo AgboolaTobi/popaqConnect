@@ -51,9 +51,25 @@ class TraineeServiceImplTest {
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
         assertThrows(InvalidDetailsException.class, () -> traineeService.register(registerRequest));
+    public void ifTraineeRegisterWithInvalidPasswordFormatThrowsAndExceptionTest(){
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("ope");
+        traineeRegisterRequest.setPassword("1234");
+        traineeRegisterRequest.setEmail("uoidhshdgtytdwgy");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("66t77253827673");
+        assertThrows(InvalidDetailsException.class,()-> traineeService.register(traineeRegisterRequest));
     }
 
     @Test
+    public void testThatIfClientRegistersWithInvalidEmailFormatThrowsAndException(){
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("ope");
+        traineeRegisterRequest.setPassword("Opedert13@");
+        traineeRegisterRequest.setEmail("ope@");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("66t77253827673");
+        assertThrows(InvalidDetailsException.class,()-> traineeService.register(traineeRegisterRequest));
     public void testThatIfClientRegistersWithInvalidEmailFormatThrowsAndException() {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
@@ -65,6 +81,19 @@ class TraineeServiceImplTest {
     }
 
     @Test
+    public void traineeLoginWithInvalidEmailTest(){
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("ope");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("+23489447913");
+        traineeService.register(traineeRegisterRequest);
+
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("qudusa55@gmail.com");
+        traineeLoginRequest.setPassword("Iniestajnr1");
+        assertThrows(UserDoesNotExistException.class,()-> traineeService.login(traineeLoginRequest));
     public void traineeLoginWithInvalidEmailTest() {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
@@ -80,6 +109,19 @@ class TraineeServiceImplTest {
     }
 
     @Test
+    public void traineeLoginWithWrongPasswordTest(){
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("ope");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("+23489447913");
+        traineeService.register(traineeRegisterRequest);
+
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("ope@gmail.com");
+        traineeLoginRequest.setPassword("234r4");
+        assertThrows(InvalidDetailsException.class,()-> traineeService.login(traineeLoginRequest));
     public void traineeLoginWithWrongPasswordTest() {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
@@ -97,14 +139,19 @@ class TraineeServiceImplTest {
     @Test
     public void traineeLoginWithRightDetailsTest() {
         Trainee trainee = new Trainee();
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setUserName("ope");
-        registerRequest.setPassword("Iniestajnr1");
-        registerRequest.setEmail("ope@gmail.com");
-        registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("09089447913");
-        traineeService.register(registerRequest);
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("ope");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("09089447913");
+        traineeService.register(traineeRegisterRequest);
 
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("ope@gmail.com");
+        traineeLoginRequest.setPassword("Iniestajnr1");
+        traineeService.login(traineeLoginRequest);
+        assertTrue(trainee.isLoginStatus());
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("ope@gmail.com");
         loginRequest.setPassword("Iniestajnr1");
@@ -114,6 +161,19 @@ class TraineeServiceImplTest {
     }
 
     @Test
+    public void testThatWhenATraineeApplyToBeTrained(){
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("ope");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("09089447913");
+        traineeService.register(traineeRegisterRequest);
+
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("ope@gmail.com");
+        traineeLoginRequest.setPassword("Iniestajnr1");
+        traineeService.login(traineeLoginRequest);
     public void testThatWhenATraineeApplyToBeTrained() {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
@@ -163,6 +223,14 @@ class TraineeServiceImplTest {
     }
 
     @Test
+    public void testThatWhenTraineeSearchForAvailableTrainerIfNoOneIsAvailableListSizeIsZero(){
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("ope");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("09089447913");
+        traineeService.register(traineeRegisterRequest);
     public void testThatWhenTraineeSearchForAvailableTrainerIfNoOneIsAvailableListSizeIsZero() {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
@@ -173,10 +241,10 @@ class TraineeServiceImplTest {
         traineeService.register(registerRequest);
 
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("ope@gmail.com");
-        loginRequest.setPassword("Iniestajnr1");
-        traineeService.login(loginRequest);
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("ope@gmail.com");
+        traineeLoginRequest.setPassword("Iniestajnr1");
+        traineeService.login(traineeLoginRequest);
 
         ServiceProviderRegisterRequest registerRequests = new ServiceProviderRegisterRequest();
         registerRequests.setUserName("Mr tobi");
@@ -210,12 +278,20 @@ class TraineeServiceImplTest {
         request.setAddress("yaba mowe");
         request.setPhoneNumber("09089447913");
         traineeService.register(request);
+    public void testThatWhenTraineeCancelCourseCourseStatusChangeToCancelled(){
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("philip");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("09089447913");
+        traineeService.register(traineeRegisterRequest);
 
 
-        LoginRequest loginRequests = new LoginRequest();
-        loginRequests.setEmail("ope@gmail.com");
-        loginRequests.setPassword("Iniestajnr1");
-        traineeService.login(loginRequests);
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("ope@gmail.com");
+        traineeLoginRequest.setPassword("Iniestajnr1");
+        traineeService.login(traineeLoginRequest);
 
         ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
         registerRequest.setUserName("Mr tobi");

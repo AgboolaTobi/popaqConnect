@@ -39,4 +39,11 @@ public interface ServiceProviderServices {
 
     void deleteAccount(String email);
 
+
+    List<ServiceProvider> findByTitle(String title);
+
+    List<ServiceProvider> searchByCategory(String category);
+
+    Trainee findTraineeByEmail(FindTraineeByEmailRequest findTraineeByEmailRequest);
+    List<Trainee> findAllTrainees(String email);
 }

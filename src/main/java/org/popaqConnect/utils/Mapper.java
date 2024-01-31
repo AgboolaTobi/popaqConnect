@@ -6,6 +6,7 @@ import org.popaqConnect.data.models.Trainee;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.dtos.requests.EmailRequest;
 import org.popaqConnect.dtos.requests.RegisterRequest;
+import org.popaqConnect.dtos.requests.TraineeRegisterRequest;
 import org.popaqConnect.dtos.requests.TrainingRequest;
 import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
 
@@ -21,13 +22,13 @@ public class  Mapper {
         client.setPassword(registerRequest.getPassword());
         return client;
     }
-    public static Trainee mapTrainee(RegisterRequest registerRequest) {
+    public static Trainee mapTrainee(TraineeRegisterRequest traineeRegisterRequest) {
         Trainee trainee = new Trainee();
-        trainee.setFirstName(registerRequest.getUserName());
-        trainee.setPhoneNumber(registerRequest.getPhoneNumber());
-        trainee.setAddress(registerRequest.getAddress());
-        trainee.setEmail(registerRequest.getEmail());
-        trainee.setPassword(registerRequest.getPassword());
+        trainee.setUsername(traineeRegisterRequest.getUserName());
+        trainee.setPhoneNumber(traineeRegisterRequest.getPhoneNumber());
+        trainee.setAddress(traineeRegisterRequest.getAddress());
+        trainee.setEmail(traineeRegisterRequest.getEmail());
+        trainee.setPassword(traineeRegisterRequest.getPassword());
         return trainee;
     }
 

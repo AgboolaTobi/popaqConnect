@@ -206,17 +206,18 @@ public class ServiceProviderServiceImplTest {
         serviceProvider.get().setAvailableForTraining(true);
         serviceProviderRepository.save(serviceProvider.get());
 
-        RegisterRequest requests = new RegisterRequest();
-        requests.setUserName("Philip");
-        requests.setPassword("Iniestajnr1");
-        requests.setEmail("ope@gmail.com");
-        requests.setAddress("yaba mowe");
-        requests.setPhoneNumber("09089447913");
-        traineeService.register(requests);
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("Philip");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("09089447913");
+        traineeService.register(traineeRegisterRequest);
 
-       loginRequest.setEmail("ope@gmail.com");
-       loginRequest.setPassword("Iniestajnr1");
-       traineeService.login(loginRequest);
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("ope@gmail.com");
+        traineeLoginRequest.setPassword("Iniestajnr");
+        traineeService.login(traineeLoginRequest);
 
         TrainingRequest trainingApplication = new TrainingRequest();
 
@@ -254,19 +255,19 @@ public class ServiceProviderServiceImplTest {
    public void testThatWhenServiceProviderAsOneTraineeAndHeCancelTheTrainingApplicationListOfHisTraineeIsZero(){
        service.register(registerRequest);
        service.login(loginRequest);
-       RegisterRequest request = new RegisterRequest();
-       request.setUserName("Ope");
-       request.setPassword("Iniestajnr1");
-       request.setEmail("ope@gmail.com");
-       request.setAddress("yaba mowe");
-       request.setPhoneNumber("09089447913");
-       traineeService.register(request);
+       TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+       traineeRegisterRequest.setUserName("Ope");
+       traineeRegisterRequest.setPassword("Iniestajnr1");
+       traineeRegisterRequest.setEmail("ope@gmail.com");
+       traineeRegisterRequest.setAddress("yaba mowe");
+       traineeRegisterRequest.setPhoneNumber("09089447913");
+       traineeService.register(traineeRegisterRequest);
 
 
-       LoginRequest loginRequests = new LoginRequest();
-       loginRequests.setEmail("ope@gmail.com");
-       loginRequests.setPassword("Iniestajnr1");
-       traineeService.login(loginRequests);
+       TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+       traineeLoginRequest.setEmail("ope@gmail.com");
+       traineeLoginRequest.setPassword("Iniestajnr1");
+       traineeService.login(traineeLoginRequest);
 
        Optional<ServiceProvider> serviceProvider = service.findUser(loginRequest.getEmail());
        serviceProvider.get().setAvailableForTraining(true);
@@ -560,16 +561,46 @@ public class ServiceProviderServiceImplTest {
     }
 
     @Test
-    public void register_ServiceProvider_LoginServiceProvider_DeleteAccount_ServiceProviderAccountTryLoginInThrowExceptionTest(){
+    public void register_ServiceProvider_LoginServiceProvider_DeleteAccount_ServiceProviderAccountTryLoginInThrowExceptionTest() {
         service.register(registerRequest);
 
         service.login(loginRequest);
 
-       service.deleteAccount(registerRequest.getEmail());
+        service.deleteAccount(registerRequest.getEmail());
 
-        Optional <ServiceProvider> serviceProvider = serviceProviderRepository.findByEmail(loginRequest.getEmail());
+        Optional<ServiceProvider> serviceProvider = serviceProviderRepository.findByEmail(loginRequest.getEmail());
         assertFalse(serviceProvider.get().isLoginStatus());
+    }
 
+    @Test
+    public void findTraineeBYEmailTest(){
+        service.register(registerRequest);
+        service.login(loginRequest);
+
+
+        Optional<ServiceProvider> serviceProvider = service.findUser("philipodey75@gmail.com");
+
+        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        traineeRegisterRequest.setUserName("Philip");
+        traineeRegisterRequest.setPassword("Iniestajnr1");
+        traineeRegisterRequest.setEmail("ope@gmail.com");
+        traineeRegisterRequest.setAddress("yaba mowe");
+        traineeRegisterRequest.setPhoneNumber("09089447913");
+        traineeService.register(traineeRegisterRequest);
+
+        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
+        traineeLoginRequest.setEmail("ope@gmail.com");
+        traineeLoginRequest.setPassword("Iniestajnr1");
+        traineeService.login(traineeLoginRequest);
+
+
+
+        FindTraineeByEmailRequest findTraineeByEmailRequest = new FindTraineeByEmailRequest();
+        findTraineeByEmailRequest.setServiceProviderEmail("philipodey75@gmail.com");
+        findTraineeByEmailRequest.setTraineeEmail("ope@gmail.com");
+
+        assertEquals("ope@gmail.com",service.findTraineeByEmail(findTraineeByEmailRequest).getEmail());
+    }
     }
 
 
