@@ -109,15 +109,17 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void updateProfile(TraineeUpdateProfileRequest updateDetailRequest) {
+        if(updateDetailRequest.getEmail()== null)throw new InvalidDetailsException("Kindly input correct credentials");
      Trainee trainee = traineeRepository.findByEmail(updateDetailRequest.getEmail());
      if (!userExist(updateDetailRequest.getEmail())) throw new UserExistException(updateDetailRequest.getEmail() + " does not exist");
-     if (!(updateDetailRequest.getEmail() == null)) trainee.setEmail(updateDetailRequest.getUpdatedEmail());
+
+     if (!(updateDetailRequest.getUpdatedEmail() == null)) trainee.setEmail(updateDetailRequest.getUpdatedEmail());
+
      if (!(updateDetailRequest.getPassword() == null)) trainee.setPassword(updateDetailRequest.getPassword());
      if (!(updateDetailRequest.getPhoneNumber() == null)) trainee.setPhoneNumber(updateDetailRequest.getPhoneNumber());
      if (!(updateDetailRequest.getAddress() == null)) trainee.setAddress(updateDetailRequest.getAddress());
      if (!(updateDetailRequest.getBioData() == null)) trainee.setBioData(updateDetailRequest.getBioData());
-     if (!(updateDetailRequest.getFirstName() == null)) trainee.setFirstName(updateDetailRequest.getFirstName());
-     if (!(updateDetailRequest.getLastName() == null)) trainee.setLastName(updateDetailRequest.getLastName());
+     if(updateDetailRequest.getUsername() != null)trainee.setUsername(updateDetailRequest.getUsername());
      traineeRepository.save(trainee);
     }
 

@@ -29,6 +29,8 @@ import java.util.List;
 
 import java.util.Optional;
 
+import static org.popaqConnect.utils.Verification.*;
+
 
 @Service
 public class ClientServiceImp implements ClientService {
@@ -49,9 +51,9 @@ public class ClientServiceImp implements ClientService {
     @Override
     public void register(RegisterRequest registerRequest) {
         if(userExist(registerRequest.getEmail()))throw new UserExistException("User exist");
-        if(!Verification.verifyPassword(registerRequest.getPassword()))throw new InvalidDetailsException("Wrong password format");
-        if(!Verification.verifyEmail(registerRequest.getEmail()))throw new InvalidDetailsException("Invalid email format");
-        if (!Verification.verifyPhoneNumber(registerRequest.getPhoneNumber())) throw new InvalidDetailsException("Invalid PhoneNumber format");
+        if(!verifyPassword(registerRequest.getPassword()))throw new InvalidDetailsException("Wrong password format");
+        if(!verifyEmail(registerRequest.getEmail()))throw new InvalidDetailsException("Invalid email format");
+        if (!verifyPhoneNumber(registerRequest.getPhoneNumber())) throw new InvalidDetailsException("Invalid PhoneNumber format");
         Client newClient = Mapper.mapClient(registerRequest);
         clientRepository.save(newClient);
     }
@@ -79,10 +81,11 @@ public class ClientServiceImp implements ClientService {
      }
 
     @Override
-    public BookResponse bookServices(BookRequest bookRequest) {
+    public BookResponse  bookServices(BookRequest bookRequest) {
         Client client = clientRepository.findByEmail(bookRequest.getClientEmail());
         if(client == null)throw new UserExistException("User doesn't exist");
         if(!userExist(client.getEmail()))throw new UserExistException("User doesn't Exist");
+        if(!client.isLoginStatus()) throw new AppLockedException("Kindly login");
         Optional<ServiceProvider> serviceProvider1 = serviceProvider.findUser(bookRequest.getServiceProviderEmail());
         if(serviceProvider1.isEmpty())throw new UserExistException("User doesn't exist");
         if(!serviceProvider1.get().isAvailable())throw new UnAvailableException("User is not available");

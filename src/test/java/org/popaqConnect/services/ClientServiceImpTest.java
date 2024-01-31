@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.dtos.requests.RegisterRequest;
-import org.popaqConnect.exceptions.InvalidDetailsException;
+import org.popaqConnect.exceptions.*;
 import org.popaqConnect.data.BookType;
 import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.models.Client;
@@ -36,7 +36,7 @@ class ClientServiceImpTest {
     ClientRepository clientRepository;
 
     @Autowired
-    ServiceProviderRepository serviceProviderRepository;
+    ServiceProviderRepository  serviceProviderRepository;
     @Autowired
     BookRepository bookRepository;
     @Autowired
@@ -45,50 +45,43 @@ class ClientServiceImpTest {
     BookServices bookServices;
 
     @AfterEach
-    public void doThisAfterEach() {
+    public void doThisAfterEach(){
         clientRepository.deleteAll();
         serviceProviderRepository.deleteAll();
-        bookRepository.deleteAll();
+         bookRepository.deleteAll();
     }
-
     @Test
-    public void testThatIfClientRegistersWithInvalidPasswordFormatThrowsAndException() {
+    public void testThatIfClientRegistersWithInvalidPasswordFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
         registerRequest.setPassword("1234");
         registerRequest.setEmail("uoidhshdgtytdwgy");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
-        assertThrows(InvalidDetailsException.class, () -> clientService.register(registerRequest));
+        assertThrows(InvalidDetailsException.class,()-> clientService.register(registerRequest));
     }
-
     @Test
-    public void testThatIfClientRegistersWithInvalidEmailFormatThrowsAndException() {
+    public void testThatIfClientRegistersWithInvalidEmailFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
-        assertThrows(InvalidDetailsException.class, () -> clientService.register(registerRequest));
+        assertThrows(InvalidDetailsException.class,()-> clientService.register(registerRequest));
     }
-
     @Test
-    public void testThatIfClientRegistersWithInvalidPhoneNumberFormatThrowsAndException() {
+    public void testThatIfClientRegistersWithInvalidPhoneNumberFormatThrowsAndException(){
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
         registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
-        clientService.register(registerRequest);
-        assertThrows(UserExistException.class,()-> clientService.register(registerRequest));
-        assertThrows(InvalidDetailsException.class, () -> clientService.register(registerRequest));
+        assertThrows(InvalidDetailsException.class,()-> clientService.register(registerRequest));
     }
-
     @Test
-    public void testThatIfClientTriesToLoginWithWrongEmailAddressThrowsException() {
+    public void testThatIfClientTriesToLoginWithWrongEmailAddressThrowsException(){
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
         registerRequest.setPassword("Opedert13@");
@@ -99,7 +92,7 @@ class ClientServiceImpTest {
         ClientLoginRequest loginRequest = new ClientLoginRequest();
         loginRequest.setEmail("ope@gmail.com");
         loginRequest.setPassword("Opedert");
-        assertThrows(InvalidLoginException.class, () -> clientService.login(loginRequest));
+        assertThrows(InvalidLoginException.class,()->clientService.login(loginRequest));
     }
 
     @Test
@@ -144,12 +137,12 @@ class ClientServiceImpTest {
         bookRequest.setClientEmail("ope@gmail.com");
         clientService.bookServices(bookRequest);
         List<Book> clientsBooks = clientService.viewAllBookingHistory("ope@gmail.com");
-        assertEquals(1, clientsBooks.size());
+        assertEquals(1,clientsBooks.size());
 
     }
 
     @Test
-    public void testThatWhenAClientBookARequestAndServiceProviderIsAvailabilityBecomesFalse() {
+    public void testThatWhenAClientBookARequestAndServiceProviderIsAvailabilityBecomesFalse(){
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUserName("ope");
         registerRequest.setPassword("Ope13@");
@@ -204,9 +197,7 @@ class ClientServiceImpTest {
         acceptBookingRequest.setResponse("reject");
         serviceProviderServices.acceptClientBookRequest(acceptBookingRequest);
 
-        assertSame(BookType.NOTACCEPTED, book.getProjectStatus());
         book = clientService.viewABookingHistory(findABookRequest);
-        assertSame(BookType.NOTACCEPTED, book.getProjectStatus());
         assertSame(BookType.REJECT,book.getProjectStatus());
     }
 
@@ -219,8 +210,7 @@ class ClientServiceImpTest {
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
+        registerRequest.setPhoneNumber("+23456789056");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -248,8 +238,7 @@ class ClientServiceImpTest {
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
+        registerRequest.setPhoneNumber("07066221008");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -272,8 +261,7 @@ class ClientServiceImpTest {
         registerRequest.setPassword("Opedert13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("66t77253827673");
-        registerRequest.setAge("25 years");
+        registerRequest.setPhoneNumber("07066221009");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -297,7 +285,7 @@ class ClientServiceImpTest {
         registerRequest.setPassword("Ope13@");
         registerRequest.setEmail("ope@gmail.com");
         registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("66t77253827673");
+        registerRequest.setPhoneNumber("+2347066221008");
         clientService.register(registerRequest);
 
         ClientLoginRequest loginRequest = new ClientLoginRequest();
@@ -356,10 +344,6 @@ class ClientServiceImpTest {
         assertSame(BookType.CANCEL,book.getProjectStatus());
         assertTrue(seller.get().isAvailable());
 
-        book = clientService.viewABookingHistory(findABookRequest);
-        assertSame(BookType.ACCEPTED, book.getProjectStatus());
-        book = clientService.viewABookingHistory(findABookRequest);
-        assertSame(BookType.REJECT, book.getProjectStatus());
 
     }
 
