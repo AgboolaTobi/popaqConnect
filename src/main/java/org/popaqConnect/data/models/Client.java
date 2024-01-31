@@ -21,5 +21,4 @@ public class Client {
 
     private boolean isLoginStatus;
     private String password;
-    private boolean isLocked;
 }

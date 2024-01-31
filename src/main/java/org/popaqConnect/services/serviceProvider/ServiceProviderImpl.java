@@ -48,6 +48,8 @@ public class ServiceProviderImpl implements ServiceProviderServices {
 
     @Override
     public void login(LoginRequest loginRequest) {
+        if(loginRequest.getEmail().equals(null))throw new InvalidDetailsException("Invalid input");
+        if(loginRequest.getPassword().equals(null))throw new InvalidDetailsException("Invalid input");
         Optional <ServiceProvider> serviceProvider = findUser(loginRequest.getEmail());
         if (serviceProvider.isEmpty()) throw new InvalidLoginException(loginRequest.getEmail() + " does not exist");
         if (!serviceProvider.get().getPassword().equals(loginRequest.getPassword())) throw new InvalidDetailsException("Invalid Login Details!!");

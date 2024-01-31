@@ -168,13 +168,14 @@ public class ServiceProviderServiceImplTest {
       registerRequest.setCategory("ENGINEER");
       registerRequest.setJobTitle("Software engineer");
       service.register(registerRequest);
+
       LoginRequest loginRequest = new LoginRequest();
       loginRequest.setEmail("philipodjjley75@gmail.com");
       loginRequest.setPassword("PhilipOdey@75");
       assertThrows(InvalidLoginException.class, ()->  service.login(loginRequest));
       loginRequest.setEmail("philipoddacey75@gmail.com");
       loginRequest.setPassword("Ope5y5xv@");
-      assertThrows(UserExistException.class, ()->  service.login(loginRequest));
+      assertThrows(InvalidLoginException.class, ()->  service.login(loginRequest));
    }
     @Test
    public void registerServiceProvider_WithTheRightDetails_LoginWithTheWrongPasswordThrowException() {
@@ -216,7 +217,7 @@ public class ServiceProviderServiceImplTest {
 
         TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
         traineeLoginRequest.setEmail("ope@gmail.com");
-        traineeLoginRequest.setPassword("Iniestajnr");
+        traineeLoginRequest.setPassword("Iniestajnr1");
         traineeService.login(traineeLoginRequest);
 
         TrainingRequest trainingApplication = new TrainingRequest();
@@ -314,7 +315,7 @@ public class ServiceProviderServiceImplTest {
         request.setPassword("Ope13@");
         request.setEmail("opeoluwaagnes@gmail.com");
         request.setAddress("yaba mowe");
-        request.setPhoneNumber("66t77253827673");
+        request.setPhoneNumber("07066221008");
         clientService.register(request);
 
         ClientLoginRequest loginRequest1 = new ClientLoginRequest();
@@ -509,7 +510,7 @@ public class ServiceProviderServiceImplTest {
     public void testThatWhenServiceProviderAcceptTrainingRequestTrainingCourseStatusChangeFromNoviceToLearning(){
         service.register(registerRequest);
         service.login(loginRequest);
-        RegisterRequest request = new RegisterRequest();
+        TraineeRegisterRequest request = new TraineeRegisterRequest();
         request.setUserName("Ope");
         request.setPassword("Iniestajnr1");
         request.setEmail("ope@gmail.com");
@@ -518,7 +519,7 @@ public class ServiceProviderServiceImplTest {
         traineeService.register(request);
 
 
-        LoginRequest loginRequests = new LoginRequest();
+        TraineeLoginRequest loginRequests = new TraineeLoginRequest();
         loginRequests.setEmail("ope@gmail.com");
         loginRequests.setPassword("Iniestajnr1");
         traineeService.login(loginRequests);
@@ -578,8 +579,6 @@ public class ServiceProviderServiceImplTest {
         service.login(loginRequest);
 
 
-        Optional<ServiceProvider> serviceProvider = service.findUser("philipodey75@gmail.com");
-
         TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
         traineeRegisterRequest.setUserName("Philip");
         traineeRegisterRequest.setPassword("Iniestajnr1");
@@ -588,10 +587,24 @@ public class ServiceProviderServiceImplTest {
         traineeRegisterRequest.setPhoneNumber("09089447913");
         traineeService.register(traineeRegisterRequest);
 
+        Optional<ServiceProvider> serviceProvider = service.findUser("philipodey75@gmail.com");
+        serviceProvider.get().setAvailableForTraining(true);
+        serviceProviderRepository.save(serviceProvider.get());
+
         TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest();
         traineeLoginRequest.setEmail("ope@gmail.com");
         traineeLoginRequest.setPassword("Iniestajnr1");
         traineeService.login(traineeLoginRequest);
+
+        TrainingRequest trainingApplication = new TrainingRequest();
+
+        trainingApplication.setTraineeEmail("ope@gmail.com");
+        trainingApplication.setStartDate("1/2/2024");
+        trainingApplication.setEndDate("2/4/2024");
+        trainingApplication.setTrainerEmail("philipodey75@gmail.com");
+        trainingApplication.setAboutYou("my name is qudus,i have no pior knowledege to this, i hope you consider me");
+        ApplyForTrainingResponse trainingResponse = traineeService.applyForTraining(trainingApplication);
+
 
 
 
@@ -604,5 +617,5 @@ public class ServiceProviderServiceImplTest {
     }
 
 
-}
+
 
