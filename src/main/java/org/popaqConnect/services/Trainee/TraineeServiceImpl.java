@@ -58,14 +58,23 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee foundTrainee = traineeRepository.findByEmail(request.getTraineeEmail());
         if(!userExist(request.getTraineeEmail()))throw new UserExistException("user does not exist");
         if(!foundTrainee.isLoginStatus())throw new AppLockedException("Kindly login");
-        if(foundTrainee.getCourseStatus() == CourseStatus.LEARNING)throw new TrainingException("Kindly complete your pending course");
+        if(checkForPendingCourse(request.getTraineeEmail()))throw new TrainingException("Kindly complete your pending course");
         Optional<ServiceProvider> serviceProvider= services.findUser(request.getTrainerEmail());
         if(serviceProvider.isEmpty())throw new UserExistException("Trainer doesn't exist");
         if(!serviceProvider.get().isAvailableForTraining())throw new TrainingException("Trainer is not open for training");
-        ApplyForTrainingResponse courseCode = applicationService.setupCourseApplication(request);
-        adminService.sendTraineeApplicationRequest(serviceProvider.get().getUserName(),courseCode.getMessage(),request);
-        return courseCode;
+        ApplyForTrainingResponse response = applicationService.setupCourseApplication(request);
+        services.saveTrainees(foundTrainee,request.getTrainerEmail());
+        adminService.sendTraineeApplicationRequest(serviceProvider.get().getUserName(),response.getMessage(),request);
+        return response;
 
+    }
+
+    private boolean checkForPendingCourse(String email){
+        List<CourseApplication> courseApplications = applicationService.findAllCourse(email);
+        for(CourseApplication courseApplication: courseApplications){
+            if(courseApplication.getCourseStatus() == CourseStatus.LEARNING)return true;
+        }
+        return false;
     }
 
     @Override
@@ -83,6 +92,7 @@ public class TraineeServiceImpl implements TraineeService {
         if(!foundTrainee.isLoginStatus())throw new AppLockedException("Kindly Login");
         applicationService.cancelCourse(cancelCourse.getCourseCode(),cancelCourse.getTraineeEmail());
         services.removeUser(cancelCourse.getTraineeEmail(),cancelCourse.getTrainerEmail());
+        adminService.sendCancelEmail(cancelCourse.getTrainerEmail(),cancelCourse.getCourseCode());
 
 
     }
@@ -117,6 +127,13 @@ public class TraineeServiceImpl implements TraineeService {
         if (!(userExist(email))) throw new UserExistException(email + " does not exist!!!");
         if (userExist(email)) trainee.setLoginStatus(false);
         traineeRepository.save(trainee);
+    }
+
+    @Override
+    public Trainee findTrainee(String traineeEmail) {
+        Trainee trainee = traineeRepository.findByEmail(traineeEmail);
+        if(trainee == null)throw new TrainingException("Trainee doesn't exist");
+        return trainee;
     }
 
     private boolean userExist(String email) {

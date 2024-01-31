@@ -24,8 +24,10 @@ public class ServiceProvider {
     private int yearsOfExperience;
     private String bioData;
     private double chargePerHour;
+
     private boolean isAvailable=true;
     private boolean isLoginStatus;
+
     private Job job;
     private List<Trainee> trainees;
     private boolean availableForTraining;

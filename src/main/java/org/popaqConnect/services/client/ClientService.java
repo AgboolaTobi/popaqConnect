@@ -20,6 +20,8 @@ public interface ClientService {
 
     Book viewABookingHistory(FindABookRequest findABookRequest);
 
+    void cancelBookingRequest(ClientCancelBookingRequest cancelRequest);
+
     void update(ClientUpdateRequest clientUpdateRequest);
 
     void logout(ClientLogoutRequest clientLogoutRequest);

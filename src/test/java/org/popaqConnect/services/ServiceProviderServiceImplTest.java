@@ -3,9 +3,7 @@ package org.popaqConnect.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.popaqConnect.data.BookType;
-import org.popaqConnect.data.JobCategory;
 import org.popaqConnect.data.models.Book;
-import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.data.repositories.JobRepository;
@@ -19,14 +17,10 @@ import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.InvalidLoginException;
 import org.popaqConnect.exceptions.UserExistException;
 import org.popaqConnect.data.CourseStatus;
-import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.models.CourseApplication;
-import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.models.Trainee;
 import org.popaqConnect.data.repositories.*;
-import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
-import org.popaqConnect.dtos.response.BookResponse;
 import org.popaqConnect.exceptions.*;
 import org.popaqConnect.services.Booking.BookServices;
 import org.popaqConnect.services.Trainee.TraineeService;
@@ -297,7 +291,7 @@ public class ServiceProviderServiceImplTest {
        cancelRequest.setEmail("ope@gmail.com");
        cancelRequest.setId(trainingResponse.getMessage());
        cancelRequest.setServiceProviderEmail("philipodey75@gmail.com");
-       service.cancelRequest(cancelRequest);
+       service.cancleTrainingRequest(cancelRequest);
 
        ViewTraineeCourseRequest courseApplication = new ViewTraineeCourseRequest();
        courseApplication.setCourseCode(trainingResponse.getMessage());
@@ -509,6 +503,60 @@ public class ServiceProviderServiceImplTest {
 
          serviceProvider = service.findUser("philipodey75@gmail.com");
          assertTrue(serviceProvider.get().isLoginStatus());
+    }
+    @Test
+    public void testThatWhenServiceProviderAcceptTrainingRequestTrainingCourseStatusChangeFromNoviceToLearning(){
+        service.register(registerRequest);
+        service.login(loginRequest);
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName("Ope");
+        request.setPassword("Iniestajnr1");
+        request.setEmail("ope@gmail.com");
+        request.setAddress("yaba mowe");
+        request.setPhoneNumber("09089447913");
+        traineeService.register(request);
+
+
+        LoginRequest loginRequests = new LoginRequest();
+        loginRequests.setEmail("ope@gmail.com");
+        loginRequests.setPassword("Iniestajnr1");
+        traineeService.login(loginRequests);
+
+        Optional<ServiceProvider> serviceProvider = service.findUser(loginRequest.getEmail());
+        serviceProvider.get().setAvailableForTraining(true);
+        serviceProviderRepository.save(serviceProvider.get());
+
+        TrainingRequest trainingApplication = new TrainingRequest();
+
+        trainingApplication.setTraineeEmail("ope@gmail.com");
+        trainingApplication.setStartDate("1/2/2024");
+        trainingApplication.setEndDate("2/4/2024");
+        trainingApplication.setTrainerEmail("philipodey75@gmail.com");
+        trainingApplication.setAboutYou("my name is qudus,i have no pior knowledege to this, i hope you consider me");
+        ApplyForTrainingResponse trainingResponse = traineeService.applyForTraining(trainingApplication);
+
+        ViewCourseApplicationRequest viewCourseApplicationRequest = new ViewCourseApplicationRequest();
+        viewCourseApplicationRequest.setTraineeEmail("ope@gmail.com");
+        viewCourseApplicationRequest.setCourseCode(trainingResponse.getMessage());
+
+        CourseApplication course = traineeService.viewCourseApplication(viewCourseApplicationRequest);
+        assertSame(CourseStatus.NOVICE,course.getCourseStatus());
+
+        ResponseToTrainingRequest response = new ResponseToTrainingRequest();
+        response.setResponse("accepted");
+        response.setEmail("philipodey75@gmail.com");
+        response.setTraineeEmail("ope@gmail.com");
+        response.setCourseCode(trainingResponse.getMessage());
+
+        service.responseToTrainingRequest(response);
+
+        ViewTraineeCourseRequest view = new ViewTraineeCourseRequest();
+        view.setTrainerEmail("philipodey75@gmail.com");
+        view.setCourseCode(trainingResponse.getMessage());
+
+
+        course = service.viewACourseApplication(view);
+        assertSame(CourseStatus.LEARNING,course.getCourseStatus());
     }
 
     @Test
