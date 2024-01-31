@@ -4,6 +4,7 @@ package org.popaqConnect.services.client;
 import org.popaqConnect.data.models.Client;
 import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.repositories.ClientRepository;
+
 import org.popaqConnect.dtos.requests.RegisterRequest;
 import org.popaqConnect.dtos.requests.SearchByDRopTitleRequest;
 
@@ -28,11 +29,14 @@ import java.util.List;
 
 import java.util.Optional;
 
+import static org.popaqConnect.utils.Verification.*;
+
 
 @Service
 public class ClientServiceImp implements ClientService {
     @Autowired
     ClientRepository clientRepository;
+
     @Autowired
     JobService jobService;
     @Autowired
@@ -43,20 +47,27 @@ public class ClientServiceImp implements ClientService {
     AdminService adminService;
 
 
+
     @Override
     public void register(RegisterRequest registerRequest) {
         if(userExist(registerRequest.getEmail()))throw new UserExistException("User exist");
-        if(!Verification.verifyPassword(registerRequest.getPassword()))throw new InvalidDetailsException("Wrong password format");
-        if(!Verification.verifyEmail(registerRequest.getEmail()))throw new InvalidDetailsException("Invalid email format");
+        if(!verifyPassword(registerRequest.getPassword()))throw new InvalidDetailsException("Wrong password format");
+        if(!verifyEmail(registerRequest.getEmail()))throw new InvalidDetailsException("Invalid email format");
+        if (!verifyPhoneNumber(registerRequest.getPhoneNumber())) throw new InvalidDetailsException("Invalid PhoneNumber format");
         Client newClient = Mapper.mapClient(registerRequest);
         clientRepository.save(newClient);
     }
     @Override
-    public List<Job> searchBYDropTitle(SearchByDRopTitleRequest search) {
+    public List<ServiceProvider> searchBYDropTitle(SearchByDRopTitleRequest search) {
         Client client = clientRepository.findByEmail(search.getEmail());
-        List<Job> jobList = jobService.findByTitle(search.getTitle());
-        clientRepository.save(client);
-        return jobList;
+        if (client == null )throw new UserDoesNotExistException("User Doesnt Exist ");
+        boolean status = client.isLoginStatus();
+        if (!status){
+            throw new AppLockedException(search.getEmail()+" Not Active");
+        }
+        List<ServiceProvider> serviceProviders = serviceProvider.findByTitle(search.getTitle());
+        if(serviceProviders.isEmpty())throw new UserExistException("User Doesnt Exist");
+        return serviceProviders;
     }
 
 
@@ -70,10 +81,11 @@ public class ClientServiceImp implements ClientService {
      }
 
     @Override
-    public BookResponse bookServices(BookRequest bookRequest) {
+    public BookResponse  bookServices(BookRequest bookRequest) {
         Client client = clientRepository.findByEmail(bookRequest.getClientEmail());
         if(client == null)throw new UserExistException("User doesn't exist");
         if(!userExist(client.getEmail()))throw new UserExistException("User doesn't Exist");
+        if(!client.isLoginStatus()) throw new AppLockedException("Kindly login");
         Optional<ServiceProvider> serviceProvider1 = serviceProvider.findUser(bookRequest.getServiceProviderEmail());
         if(serviceProvider1.isEmpty())throw new UserExistException("User doesn't exist");
         if(!serviceProvider1.get().isAvailable())throw new UnAvailableException("User is not available");
@@ -101,6 +113,61 @@ public class ClientServiceImp implements ClientService {
         if(booking == null)throw new BookingRequestException("Booking request is invalid");
         return booking;
     }
+
+    @Override
+    public List<ServiceProvider> searchByCategory(SearchByCategory searchByCategory) {
+        Client client = clientRepository.findByEmail(searchByCategory.getEmail());
+        if (client == null) throw new UserDoesNotExistException("User Doesnt Exist ");
+        boolean status = client.isLoginStatus();
+        if (!status){
+            throw new AppLockedException(searchByCategory.getEmail()+" Not Active");
+        }
+        List<ServiceProvider> serviceProviders = serviceProvider.searchByCategory(searchByCategory.getCategory());
+        if(serviceProviders.isEmpty())throw new UserExistException("User Doesnt Exist");
+        return serviceProviders;
+    }
+
+
+    @Override
+    public void cancelBookingRequest(ClientCancelBookingRequest cancelRequest) {
+        if(!userExist(cancelRequest.getClientEmail()))throw new UserExistException("user doesn't exist");
+        if(!isLocked(cancelRequest.getClientEmail()))throw new AppLockedException("Kindly login");
+        bookServices.cancelBookRequest(cancelRequest.getBookingId(), cancelRequest.getClientEmail());
+        serviceProvider.save(cancelRequest.getServiceProviderEmail());
+        adminService.sendCancelEmail(cancelRequest.getServiceProviderEmail(),cancelRequest.getBookingId());
+    }
+
+
+    @Override
+    public void update(ClientUpdateRequest clientUpdateRequest) {
+       Client existingClient = clientRepository.findByEmail(clientUpdateRequest.getEmail());
+       if (existingClient==null) throw new UserExistException("User does not exist");
+       if (!existingClient.getPassword().equals(clientUpdateRequest.getPassword())) throw new InvalidDetailsException("Invalid user details");
+      if(clientUpdateRequest.getEmail() != null) existingClient.setEmail(clientUpdateRequest.getEmail());
+      if(clientUpdateRequest.getUserName() != null) existingClient.setUserName(clientUpdateRequest.getUserName());
+      if(clientUpdateRequest.getPassword() != null)existingClient.setPassword(clientUpdateRequest.getPassword());
+      if(clientUpdateRequest.getAddress()!= null)existingClient.setAddress(clientUpdateRequest.getAddress());
+      if(clientUpdateRequest.getPhoneNumber() != null)existingClient.setPhoneNumber(clientUpdateRequest.getPhoneNumber());
+      clientRepository.save(existingClient);
+
+    }
+
+    @Override
+    public void logout(ClientLogoutRequest clientLogoutRequest) {
+        Client existingClient = clientRepository.findByEmail(clientLogoutRequest.getEmail());
+        if (existingClient==null) throw new UserExistException("User does not exist");
+        existingClient.setLoginStatus(false);
+        clientRepository.save(existingClient);
+    }
+
+    @Override
+    public void deleteAccount(ClientDeleteRequest clientDeleteRequest) {
+        Client existingClient = clientRepository.findByEmail(clientDeleteRequest.getEmail());
+        if (existingClient==null) throw new UserExistException("User does not exist");
+        verifyLogoutPassword(clientDeleteRequest.getPassword(),clientDeleteRequest.getEmail());
+        clientRepository.delete(existingClient);
+    }
+
     private boolean userExist(String email){
         Client client = clientRepository.findByEmail(email);
         return client!=null;
@@ -113,7 +180,11 @@ public class ClientServiceImp implements ClientService {
     private void verifyLoginPassword(String password,String email){
         Client client = clientRepository.findByEmail(email);
         if(!client.getPassword().equals(password))throw new InvalidLoginException("Invalid login details");
+    }
 
+    private void verifyLogoutPassword(String password,String email){
+        Client client = clientRepository.findByEmail(email);
+        if(!client.getPassword().equals(password))throw new InvalidLoginException("Invalid logout details");
     }
 
 

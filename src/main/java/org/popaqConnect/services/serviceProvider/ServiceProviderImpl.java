@@ -1,5 +1,8 @@
 package org.popaqConnect.services.serviceProvider;
 
+import org.popaqConnect.data.BookType;
+import org.popaqConnect.data.CourseStatus;
+import org.popaqConnect.data.JobCategory;
 import org.popaqConnect.data.models.*;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.*;
@@ -7,6 +10,7 @@ import org.popaqConnect.exceptions.*;
 import org.popaqConnect.services.Admin.AdminService;
 import org.popaqConnect.services.Booking.BookServices;
 import org.popaqConnect.services.CourseApplication.CourseApplicationService;
+import org.popaqConnect.services.Trainee.TraineeService;
 import org.popaqConnect.services.job.JobService;
 import org.popaqConnect.utils.ServiceProviderMapper;
 import org.popaqConnect.utils.Verification;
@@ -44,6 +48,8 @@ public class ServiceProviderImpl implements ServiceProviderServices {
 
     @Override
     public void login(LoginRequest loginRequest) {
+        if(loginRequest.getEmail().equals(null))throw new InvalidDetailsException("Invalid input");
+        if(loginRequest.getPassword().equals(null))throw new InvalidDetailsException("Invalid input");
         Optional <ServiceProvider> serviceProvider = findUser(loginRequest.getEmail());
         if (serviceProvider.isEmpty()) throw new InvalidLoginException(loginRequest.getEmail() + " does not exist");
         if (!serviceProvider.get().getPassword().equals(loginRequest.getPassword())) throw new InvalidDetailsException("Invalid Login Details!!");
@@ -68,10 +74,9 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(bookingRequest.getEmail());
         userExist(bookingRequest.getEmail());
         if (!isLocked(bookingRequest.getEmail()))throw new AppLockedException("Kindly login");
-        bookServices.setBookType(serviceProvider.get().getEmail(),bookingRequest);
-        serviceProvider.get().setAvailable(false);
+        Book book = bookServices.setBookType(serviceProvider.get().getEmail(),bookingRequest);
+        if(book.getProjectStatus() == BookType.ACCEPTED) serviceProvider.get().setAvailable(false);
         providerRepository.save(serviceProvider.get());
-        Book book = bookServices.findABookingRequest(bookingRequest.getId() ,serviceProvider.get().getEmail());
         adminService.sendAcceptRequest(bookingRequest.getId(),book.getClientEmail());
     }
 
@@ -94,7 +99,8 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     public void updateOnTrainee(UpdateOnCourseApplicationRequest updateCourseRequest) {
         userExist(updateCourseRequest.getTrainerEmail());
         if(!findUser(updateCourseRequest.getTrainerEmail()).get().isLoginStatus())throw new AppLockedException("Kindly login");
-        courseApplicationService.updateCourseApplication(updateCourseRequest);
+        CourseApplication application = courseApplicationService.updateCourseApplication(updateCourseRequest);
+
     }
 
     @Override
@@ -128,14 +134,15 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     }
 
     @Override
-    public void cancelRequest(CancelServiceProviderRequest cancelRequest) {
+    public void cancleTrainingRequest(CancelServiceProviderRequest cancelRequest) {
         Optional<ServiceProvider> serviceProvider = findUser(cancelRequest.getServiceProviderEmail());
         userExist(cancelRequest.getServiceProviderEmail());
         if(!serviceProvider.get().isLoginStatus())throw new AppLockedException("Kindly login");
         if(cancelRequest.getId().startsWith("TR-")){
             courseApplicationService.cancelCourse(cancelRequest.getId(), cancelRequest.getEmail());
-            removeUser(cancelRequest.getEmail() ,cancelRequest.getServiceProviderEmail());}
-
+            removeUser(cancelRequest.getEmail() ,cancelRequest.getServiceProviderEmail());
+            adminService.sendCancelEmail(cancelRequest.getEmail(),cancelRequest.getId());
+         }
 
     }
 
@@ -150,10 +157,14 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     @Override
     public void cancelClientBookRequest(CancelBookingRequest cancelBookingRequest) {
         Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(cancelBookingRequest.getEmail());
+        if(serviceProvider.isEmpty())throw new UserExistException("User doesn't exist");
+        bookServices.cancelBookRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
+        Book books = bookServices.findABookingRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
         if(serviceProvider.isEmpty())throw new UserExistException(cancelBookingRequest.getEmail() +" doesn't exist");
-        bookServices.cancelBookRequest(cancelBookingRequest);
+        bookServices.cancelBookRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
         serviceProvider.get().setAvailable(true);
         providerRepository.save(serviceProvider.get());
+        adminService.sendCancelEmail(books.getClientEmail(), cancelBookingRequest.getBookId());
     }
 
     @Override
@@ -191,6 +202,88 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         providerRepository.save(serviceProvider.get());
     }
 
+    @Override
+    public void responseToTrainingRequest(ResponseToTrainingRequest response) {
+        Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(response.getEmail());
+        userExist(response.getEmail());
+        if (!isLocked(response.getEmail()))throw new AppLockedException("Kindly login");
+        CourseApplication course = courseApplicationService.responseOnTraineeCourseApplication(response);
+        if(course.getCourseStatus() == CourseStatus.REJECTED)removeUser(course.getTraineeEmail(), course.getTrainerEmail());
+        adminService.sendTraineeCourseApplicationResponse(response.getCourseCode(),course);
+
+
+    }
+
+    @Override
+    public void saveTrainees(Trainee foundTrainee, String trainerEmail) {
+        Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(trainerEmail);
+        if(serviceProvider.isEmpty())throw new UserExistException("Trainer doesn't exist");
+        List<Trainee> trainees = new ArrayList<>();
+        trainees.add(foundTrainee);
+        serviceProvider.get().setTrainees(trainees);
+        providerRepository.save(serviceProvider.get());
+    }
+
+    @Override
+    public void save(String email) {
+        Optional<ServiceProvider>  serviceProvider = providerRepository.findByEmail(email);
+        if(serviceProvider.isEmpty())throw new UserExistException("user doesn't exist");
+        serviceProvider.get().setAvailable(true);
+        providerRepository.save(serviceProvider.get());
+    }
+
+    @Override
+    public List<ServiceProvider> findByTitle(String title) {
+        List<ServiceProvider> serviceProviderList = new ArrayList<>();
+        List<ServiceProvider> serviceProviders = providerRepository.findAll();
+            for (ServiceProvider serviceProvider : serviceProviders) {
+                if (serviceProvider.getJob().getJobTitle().equals(title)) {
+                    serviceProviderList.add(serviceProvider);
+                }
+            }
+            return serviceProviderList;
+    }
+
+    @Override
+    public List<ServiceProvider> searchByCategory(String category) {
+        List<ServiceProvider> serviceProviders = new ArrayList<>();
+        List<ServiceProvider> serviceProviderList = providerRepository.findAll();
+        String categoryResult = "";
+        for (JobCategory jobCategory : JobCategory.values()){
+            if (jobCategory.name().equals(category)) categoryResult = jobCategory.name();
+        }
+        for (ServiceProvider serviceProvider : serviceProviderList){
+            if (serviceProvider.getJob().getJobCategory().name().equals(categoryResult)){
+                serviceProviders.add(serviceProvider);
+            }
+        }
+        return serviceProviders;
+    }
+
+    @Override
+    public Trainee findTraineeByEmail(FindTraineeByEmailRequest findTraineeByEmailRequest) {
+        Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(findTraineeByEmailRequest.getServiceProviderEmail());
+        userExist(findTraineeByEmailRequest.getServiceProviderEmail());
+        if(!serviceProvider.get().isLoginStatus()) {
+            throw new AppLockedException("Kindly login");
+        }
+        List<Trainee> traineeList = serviceProvider.get().getTrainees();
+        for (Trainee trainee : traineeList){
+            if (trainee.getEmail().equals(findTraineeByEmailRequest.getTraineeEmail())){
+                return trainee;
+            }
+        }
+        throw new TrainingException("Trainee doesn't exist");
+    }
+    @Override
+    public List<Trainee> findAllTrainees(String email) {
+        Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(email);
+        userExist(email);
+        if (!serviceProvider.get().isLoginStatus()){
+            throw new AppLockedException("kindly login");
+        }
+        return serviceProvider.get().getTrainees();
+    }
 
     private void userExist(String email){
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(email);

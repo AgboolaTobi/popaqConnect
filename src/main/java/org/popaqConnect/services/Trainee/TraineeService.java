@@ -3,14 +3,15 @@ package org.popaqConnect.services.Trainee;
 
 import org.popaqConnect.data.models.CourseApplication;
 import org.popaqConnect.data.models.ServiceProvider;
+import org.popaqConnect.data.models.Trainee;
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
 
 import java.util.List;
 
 public interface TraineeService  {
-    void register(RegisterRequest registerRequest);
-    void login(LoginRequest loginRequest);
+    void register(TraineeRegisterRequest traineeRegisterRequest);
+    void login(TraineeLoginRequest traineeLoginRequest);
 
     ApplyForTrainingResponse applyForTraining(TrainingRequest traineeApplication);
 
@@ -24,4 +25,6 @@ public interface TraineeService  {
 
     void logout(String email);
 
+
+    Trainee findTrainee(String traineeEmail);
 }
