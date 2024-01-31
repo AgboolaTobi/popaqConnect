@@ -106,6 +106,16 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
+    public void cancelBookingRequest(ClientCancelBookingRequest cancelRequest) {
+        if(!userExist(cancelRequest.getClientEmail()))throw new UserExistException("user doesn't exist");
+        if(!isLocked(cancelRequest.getClientEmail()))throw new AppLockedException("Kindly login");
+        bookServices.cancelBookRequest(cancelRequest.getBookingId(), cancelRequest.getClientEmail());
+        serviceProvider.save(cancelRequest.getServiceProviderEmail());
+        adminService.sendCancelEmail(cancelRequest.getServiceProviderEmail(),cancelRequest.getBookingId());
+    }
+
+
+    @Override
     public void update(ClientUpdateRequest clientUpdateRequest) {
        Client existingClient = clientRepository.findByEmail(clientUpdateRequest.getEmail());
        if (existingClient==null) throw new UserExistException("User does not exist");

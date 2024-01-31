@@ -3,6 +3,7 @@ package org.popaqConnect.services.Trainee;
 
 import org.popaqConnect.data.models.CourseApplication;
 import org.popaqConnect.data.models.ServiceProvider;
+import org.popaqConnect.data.models.Trainee;
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
 
@@ -24,4 +25,6 @@ public interface TraineeService  {
 
     void logout(String email);
 
+
+    Trainee findTrainee(String traineeEmail);
 }

@@ -109,7 +109,8 @@ class TraineeServiceImplTest {
         loginRequest.setEmail("ope@gmail.com");
         loginRequest.setPassword("Iniestajnr1");
         traineeService.login(loginRequest);
-        assertTrue(trainee.isLoginStatus());
+        Trainee trainee1 = traineeService.findTrainee("ope@gmail.com");
+        assertTrue(trainee1.isLoginStatus());
     }
 
     @Test

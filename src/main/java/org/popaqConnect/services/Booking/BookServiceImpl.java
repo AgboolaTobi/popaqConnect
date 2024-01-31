@@ -57,14 +57,18 @@ public class BookServiceImpl implements BookServices {
     }
 
     @Override
-    public void setBookType(String serviceProvider, AcceptBookingRequest bookingRequest) {
+    public Book setBookType(String serviceProvider, AcceptBookingRequest bookingRequest) {
         Book bookRequest = findABookingRequest(bookingRequest.getId(),serviceProvider);
-        for(BookType bookType:BookType.values()){
-            if(bookType.name().equalsIgnoreCase(bookingRequest.getResponse().toLowerCase())) {
-                bookRequest.setProjectStatus(bookType);
-            }
+        if(bookingRequest.getResponse().equalsIgnoreCase("accepted")) {
+            bookRequest.setProjectStatus(BookType.ACCEPTED);
+            bookRepository.save(bookRequest);
         }
-        bookRepository.save(bookRequest);
+        else if(bookingRequest.getResponse().equalsIgnoreCase("reject")) {
+            bookRequest.setProjectStatus(BookType.REJECT);
+            bookRepository.save(bookRequest);
+        }
+       else  throw new  BookingRequestException("Invalid response");
+       return bookRequest;
     }
 
     @Override
@@ -79,8 +83,8 @@ public class BookServiceImpl implements BookServices {
         }
 
     @Override
-    public void cancelBookRequest(CancelBookingRequest cancelBookingRequest) {
-        Book findBookRequest = findABookingRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
+    public void cancelBookRequest(String bookId,String email) {
+        Book findBookRequest = findABookingRequest(bookId,email);
         if(findBookRequest == null)throw new BookingRequestException("Invalid details");
         findBookRequest.setProjectStatus(BookType.CANCEL);
         bookRepository.save(findBookRequest);

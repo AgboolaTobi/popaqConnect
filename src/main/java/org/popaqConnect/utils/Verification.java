@@ -9,7 +9,9 @@ public class Verification {
         return email.matches("[a-zA-Z0-9!#$%^&():;.*_~`+{}]+@[a-z]+[.][a-z]{2,3}");
     }
     public static boolean verifyPhoneNumber(String phoneNumber){
-        return phoneNumber.matches("[+234]{2,}[0-9]{7,}");
+        if (phoneNumber.startsWith("+")) return phoneNumber.matches("[+][1-9][0-9]{6,12}");
+        else return phoneNumber.matches("0[7-9][0-1][0-9]{8}");
+
     }
 
     public static boolean verifyDate(String date){

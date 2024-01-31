@@ -3,6 +3,7 @@ package org.popaqConnect.services.CourseApplication;
 import org.popaqConnect.data.CourseStatus;
 import org.popaqConnect.data.models.CourseApplication;
 import org.popaqConnect.data.repositories.CourseApplicationRepository;
+import org.popaqConnect.dtos.requests.ResponseToTrainingRequest;
 import org.popaqConnect.dtos.requests.TrainingRequest;
 import org.popaqConnect.dtos.requests.UpdateOnCourseApplicationRequest;
 import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
@@ -59,7 +60,7 @@ public class CourseApplicationImpl implements CourseApplicationService {
     }
 
     @Override
-    public void updateCourseApplication(UpdateOnCourseApplicationRequest updateCourseRequest) {
+    public CourseApplication updateCourseApplication(UpdateOnCourseApplicationRequest updateCourseRequest) {
         CourseApplication courseApplication = findCourse(updateCourseRequest.getCourseCode(), updateCourseRequest.getTraineeEmail());
         if(courseApplication == null)throw new UpdateOnCourseException("Invalid Details");
         if(courseApplication.getCourseStatus() == CourseStatus.LEARNING) {
@@ -71,6 +72,7 @@ public class CourseApplicationImpl implements CourseApplicationService {
                 courseApplicationRepository.save(courseApplication);
             }
         }
+        return courseApplication;
     }
 
     @Override
@@ -82,12 +84,30 @@ public class CourseApplicationImpl implements CourseApplicationService {
 
     }
 
-    private static void updateCourseStatus(UpdateOnCourseApplicationRequest updateCourseRequest, CourseApplication courseApplication) {
-        for(CourseStatus courseStatus:CourseStatus.values()){
-            if(courseStatus.name().equalsIgnoreCase(updateCourseRequest.getUpdateCourseStatus())){
-                courseApplication.setCourseStatus(courseStatus);
-
-            }
+    @Override
+    public CourseApplication responseOnTraineeCourseApplication(ResponseToTrainingRequest response) {
+        CourseApplication courseApplication = findCourse(response.getCourseCode(), response.getEmail());
+        if(courseApplication == null)throw new CourseApplicationException("Course doesn't exist");
+        if(response.getResponse().equalsIgnoreCase("accepted")) {
+            courseApplication.setCourseStatus(CourseStatus.LEARNING);
+            courseApplicationRepository.save(courseApplication);
+            return courseApplication;
         }
+        if(response.getResponse().equalsIgnoreCase("rejected")) {
+            courseApplication.setCourseStatus(CourseStatus.REJECTED);
+            courseApplicationRepository.save(courseApplication);
+            return courseApplication;
+        }
+        throw new CourseApplicationException("Invalid response");
+    }
+
+    private static void updateCourseStatus(UpdateOnCourseApplicationRequest updateCourseRequest, CourseApplication courseApplication) {
+        if(updateCourseRequest.getUpdateCourseStatus().equalsIgnoreCase("completed")) {
+            courseApplication.setCourseStatus(CourseStatus.COMPLETED);
+        }
+        else if(updateCourseRequest.getUpdateCourseStatus().equalsIgnoreCase("Expelled")) {
+            courseApplication.setCourseStatus(CourseStatus.EXPELLED);
+        }
+        else throw new CourseApplicationException("Invalid response");
     }
 }
