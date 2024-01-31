@@ -2,6 +2,7 @@ package org.popaqConnect.services.serviceProvider;
 
 import org.popaqConnect.data.BookType;
 import org.popaqConnect.data.CourseStatus;
+import org.popaqConnect.data.JobCategory;
 import org.popaqConnect.data.models.*;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.*;
@@ -229,6 +230,58 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         providerRepository.save(serviceProvider.get());
     }
 
+    @Override
+    public List<ServiceProvider> findByTitle(String title) {
+        List<ServiceProvider> serviceProviderList = new ArrayList<>();
+        List<ServiceProvider> serviceProviders = providerRepository.findAll();
+            for (ServiceProvider serviceProvider : serviceProviders) {
+                if (serviceProvider.getJob().getJobTitle().equals(title)) {
+                    serviceProviderList.add(serviceProvider);
+                }
+            }
+            return serviceProviderList;
+    }
+
+    @Override
+    public List<ServiceProvider> searchByCategory(String category) {
+        List<ServiceProvider> serviceProviders = new ArrayList<>();
+        List<ServiceProvider> serviceProviderList = providerRepository.findAll();
+        String categoryResult = "";
+        for (JobCategory jobCategory : JobCategory.values()){
+            if (jobCategory.name().equals(category)) categoryResult = jobCategory.name();
+        }
+        for (ServiceProvider serviceProvider : serviceProviderList){
+            if (serviceProvider.getJob().getJobCategory().name().equals(categoryResult)){
+                serviceProviders.add(serviceProvider);
+            }
+        }
+        return serviceProviders;
+    }
+
+    @Override
+    public Trainee findTraineeByEmail(FindTraineeByEmailRequest findTraineeByEmailRequest) {
+        Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(findTraineeByEmailRequest.getServiceProviderEmail());
+        userExist(findTraineeByEmailRequest.getServiceProviderEmail());
+        if(!serviceProvider.get().isLoginStatus()) {
+            throw new AppLockedException("Kindly login");
+        }
+        List<Trainee> traineeList = serviceProvider.get().getTrainees();
+        for (Trainee trainee : traineeList){
+            if (trainee.getEmail().equals(findTraineeByEmailRequest.getTraineeEmail())){
+                return trainee;
+            }
+        }
+        throw new TrainingException("Trainee doesn't exist");
+    }
+    @Override
+    public List<Trainee> findAllTrainees(String email) {
+        Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(email);
+        userExist(email);
+        if (!serviceProvider.get().isLoginStatus()){
+            throw new AppLockedException("kindly login");
+        }
+        return serviceProvider.get().getTrainees();
+    }
 
     private void userExist(String email){
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(email);

@@ -32,22 +32,22 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     AdminService adminService;
     @Override
-    public void register(RegisterRequest registerRequest) {
-        if (userExist(registerRequest.getEmail())) throw new UserExistException(registerRequest.getEmail()+
+    public void register(TraineeRegisterRequest traineeRegisterRequest) {
+        if (userExist(traineeRegisterRequest.getEmail())) throw new UserExistException(traineeRegisterRequest.getEmail()+
                 " Already Exist");
-        if(!Verification.verifyPassword(registerRequest.getPassword()))
+        if(!Verification.verifyPassword(traineeRegisterRequest.getPassword()))
             throw new InvalidDetailsException("Wrong password format");
-        if(!Verification.verifyEmail(registerRequest.getEmail()))
+        if(!Verification.verifyEmail(traineeRegisterRequest.getEmail()))
             throw new InvalidDetailsException("Invalid email format");
-        Trainee trainee = mapTrainee(registerRequest);
+        Trainee trainee = mapTrainee(traineeRegisterRequest);
         traineeRepository.save(trainee);
     }
     @Override
-    public void login(LoginRequest loginRequest) {
-        Trainee foundTrainee = traineeRepository.findByEmail(loginRequest.getEmail());
-        if (!userExist(loginRequest.getEmail())) throw new UserDoesNotExistException(loginRequest.getEmail()+
+    public void login(TraineeLoginRequest traineeLoginRequest) {
+        Trainee foundTrainee = traineeRepository.findByEmail(traineeLoginRequest.getEmail());
+        if (!userExist(traineeLoginRequest.getEmail())) throw new UserDoesNotExistException(traineeLoginRequest.getEmail()+
                 " Doesn't Exist");
-        if (!foundTrainee.getPassword().equals(loginRequest.getPassword()))
+        if (!foundTrainee.getPassword().equals(traineeLoginRequest.getPassword()))
             throw new InvalidDetailsException("Incorrect Details");
         foundTrainee.setLoginStatus(true);
         traineeRepository.save(foundTrainee);

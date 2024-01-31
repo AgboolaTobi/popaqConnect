@@ -51,15 +51,21 @@ public class ClientServiceImp implements ClientService {
         if(userExist(registerRequest.getEmail()))throw new UserExistException("User exist");
         if(!Verification.verifyPassword(registerRequest.getPassword()))throw new InvalidDetailsException("Wrong password format");
         if(!Verification.verifyEmail(registerRequest.getEmail()))throw new InvalidDetailsException("Invalid email format");
+        if (!Verification.verifyPhoneNumber(registerRequest.getPhoneNumber())) throw new InvalidDetailsException("Invalid PhoneNumber format");
         Client newClient = Mapper.mapClient(registerRequest);
         clientRepository.save(newClient);
     }
     @Override
-    public List<Job> searchBYDropTitle(SearchByDRopTitleRequest search) {
+    public List<ServiceProvider> searchBYDropTitle(SearchByDRopTitleRequest search) {
         Client client = clientRepository.findByEmail(search.getEmail());
-        List<Job> jobList = jobService.findByTitle(search.getTitle());
-        clientRepository.save(client);
-        return jobList;
+        if (client == null )throw new UserDoesNotExistException("User Doesnt Exist ");
+        boolean status = client.isLoginStatus();
+        if (!status){
+            throw new AppLockedException(search.getEmail()+" Not Active");
+        }
+        List<ServiceProvider> serviceProviders = serviceProvider.findByTitle(search.getTitle());
+        if(serviceProviders.isEmpty())throw new UserExistException("User Doesnt Exist");
+        return serviceProviders;
     }
 
 
@@ -104,6 +110,20 @@ public class ClientServiceImp implements ClientService {
         if(booking == null)throw new BookingRequestException("Booking request is invalid");
         return booking;
     }
+
+    @Override
+    public List<ServiceProvider> searchByCategory(SearchByCategory searchByCategory) {
+        Client client = clientRepository.findByEmail(searchByCategory.getEmail());
+        if (client == null) throw new UserDoesNotExistException("User Doesnt Exist ");
+        boolean status = client.isLoginStatus();
+        if (!status){
+            throw new AppLockedException(searchByCategory.getEmail()+" Not Active");
+        }
+        List<ServiceProvider> serviceProviders = serviceProvider.searchByCategory(searchByCategory.getCategory());
+        if(serviceProviders.isEmpty())throw new UserExistException("User Doesnt Exist");
+        return serviceProviders;
+    }
+
 
     @Override
     public void cancelBookingRequest(ClientCancelBookingRequest cancelRequest) {
