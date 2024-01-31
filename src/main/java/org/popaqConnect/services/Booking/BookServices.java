@@ -15,8 +15,8 @@ public interface BookServices {
 
     Book findABookingRequest(String bookID, String userEmail);
 
-    void setBookType(String serviceProviderId, AcceptBookingRequest bookingRequest);
+    Book setBookType(String serviceProviderId, AcceptBookingRequest bookingRequest);
 
     void completeJobStatus(CompleteJobRequest completeJobRequest);
-    void cancelBookRequest(CancelBookingRequest cancelBookingRequest);
+    void cancelBookRequest(String bookId,String email);
 }

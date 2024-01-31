@@ -19,6 +19,5 @@ public class Trainee{
     private String age;
     private String address;
     private String password;
-    private CourseStatus courseStatus = CourseStatus.NOVICE;
     private boolean isLoginStatus;
 }

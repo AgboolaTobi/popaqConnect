@@ -1,6 +1,7 @@
 package org.popaqConnect.services.CourseApplication;
 
 import org.popaqConnect.data.models.CourseApplication;
+import org.popaqConnect.dtos.requests.ResponseToTrainingRequest;
 import org.popaqConnect.dtos.requests.TrainingRequest;
 import org.popaqConnect.dtos.requests.UpdateOnCourseApplicationRequest;
 import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
@@ -14,7 +15,8 @@ public interface CourseApplicationService {
 
     List<CourseApplication> findAllCourse(String email);
 
-    void updateCourseApplication(UpdateOnCourseApplicationRequest updateCourseRequest);
+    CourseApplication updateCourseApplication(UpdateOnCourseApplicationRequest updateCourseRequest);
 
     void cancelCourse(String courseCode, String traineeEmail);
+    CourseApplication responseOnTraineeCourseApplication(ResponseToTrainingRequest response);
 }

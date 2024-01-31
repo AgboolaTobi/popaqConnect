@@ -1,5 +1,7 @@
 package org.popaqConnect.services.serviceProvider;
 
+import org.popaqConnect.data.BookType;
+import org.popaqConnect.data.CourseStatus;
 import org.popaqConnect.data.models.*;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.*;
@@ -7,6 +9,7 @@ import org.popaqConnect.exceptions.*;
 import org.popaqConnect.services.Admin.AdminService;
 import org.popaqConnect.services.Booking.BookServices;
 import org.popaqConnect.services.CourseApplication.CourseApplicationService;
+import org.popaqConnect.services.Trainee.TraineeService;
 import org.popaqConnect.services.job.JobService;
 import org.popaqConnect.utils.ServiceProviderMapper;
 import org.popaqConnect.utils.Verification;
@@ -45,7 +48,7 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     @Override
     public void login(LoginRequest loginRequest) {
         Optional <ServiceProvider> serviceProvider = findUser(loginRequest.getEmail());
-        if (serviceProvider.isEmpty()) throw new InvalidLoginException("Invalid Credentials");
+        if (serviceProvider.isEmpty()) throw new InvalidLoginException(loginRequest.getEmail() + " does not exist");
         if (!serviceProvider.get().getPassword().equals(loginRequest.getPassword())) throw new InvalidDetailsException("Invalid Login Details!!");
         serviceProvider.get().setLoginStatus(true);
         providerRepository.save(serviceProvider.get());
@@ -68,10 +71,9 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(bookingRequest.getEmail());
         userExist(bookingRequest.getEmail());
         if (!isLocked(bookingRequest.getEmail()))throw new AppLockedException("Kindly login");
-        bookServices.setBookType(serviceProvider.get().getEmail(),bookingRequest);
-        serviceProvider.get().setAvailable(false);
+        Book book = bookServices.setBookType(serviceProvider.get().getEmail(),bookingRequest);
+        if(book.getProjectStatus() == BookType.ACCEPTED) serviceProvider.get().setAvailable(false);
         providerRepository.save(serviceProvider.get());
-        Book book = bookServices.findABookingRequest(bookingRequest.getId() ,serviceProvider.get().getEmail());
         adminService.sendAcceptRequest(bookingRequest.getId(),book.getClientEmail());
     }
 
@@ -94,7 +96,8 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     public void updateOnTrainee(UpdateOnCourseApplicationRequest updateCourseRequest) {
         userExist(updateCourseRequest.getTrainerEmail());
         if(!findUser(updateCourseRequest.getTrainerEmail()).get().isLoginStatus())throw new AppLockedException("Kindly login");
-        courseApplicationService.updateCourseApplication(updateCourseRequest);
+        CourseApplication application = courseApplicationService.updateCourseApplication(updateCourseRequest);
+
     }
 
     @Override
@@ -128,29 +131,37 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     }
 
     @Override
-    public void cancleRequest(CancelServiceProviderRequest cancelRequest) {
+    public void cancleTrainingRequest(CancelServiceProviderRequest cancelRequest) {
         Optional<ServiceProvider> serviceProvider = findUser(cancelRequest.getServiceProviderEmail());
         userExist(cancelRequest.getServiceProviderEmail());
         if(!serviceProvider.get().isLoginStatus())throw new AppLockedException("Kindly login");
         if(cancelRequest.getId().startsWith("TR-")){
             courseApplicationService.cancelCourse(cancelRequest.getId(), cancelRequest.getEmail());
-            removeUser(cancelRequest.getEmail() ,cancelRequest.getServiceProviderEmail());}
-
+            removeUser(cancelRequest.getEmail() ,cancelRequest.getServiceProviderEmail());
+            adminService.sendCancelEmail(cancelRequest.getEmail(),cancelRequest.getId());
+         }
 
     }
 
     @Override
     public void completeJobStatus(CompleteJobRequest completeJobRequest) {
+        Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(completeJobRequest.getEmail());
+        if (serviceProvider.isEmpty()) throw new UserExistException(completeJobRequest.getEmail()+" does not exist!!!");
         bookServices.completeJobStatus(completeJobRequest);
+        providerRepository.save(serviceProvider.get());
     }
 
     @Override
     public void cancelClientBookRequest(CancelBookingRequest cancelBookingRequest) {
         Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(cancelBookingRequest.getEmail());
         if(serviceProvider.isEmpty())throw new UserExistException("User doesn't exist");
-        bookServices.cancelBookRequest(cancelBookingRequest);
+        bookServices.cancelBookRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
+        Book books = bookServices.findABookingRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
+        if(serviceProvider.isEmpty())throw new UserExistException(cancelBookingRequest.getEmail() +" doesn't exist");
+        bookServices.cancelBookRequest(cancelBookingRequest.getBookId(), cancelBookingRequest.getEmail());
         serviceProvider.get().setAvailable(true);
         providerRepository.save(serviceProvider.get());
+        adminService.sendCancelEmail(books.getClientEmail(), cancelBookingRequest.getBookId());
     }
 
     @Override
@@ -166,15 +177,55 @@ public class ServiceProviderImpl implements ServiceProviderServices {
         Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(updateProfileRequest.getPreviousEmail());
         userExist(updateProfileRequest.getPreviousEmail());
         if (serviceProvider.isEmpty()) throw new InvalidDetailsException("User Does not Exist!!!");
-        if (!(serviceProvider.get().getEmail().equals(updateProfileRequest.getUpdatedEmail()))){serviceProvider.get().setEmail(updateProfileRequest.getUpdatedEmail());}
-        if (!(serviceProvider.get().getPassword().equals(updateProfileRequest.getPassword()))){serviceProvider.get().setPassword(updateProfileRequest.getPassword());}
-        if (!(serviceProvider.get().getEmail().equals(updateProfileRequest.getPhoneNumber()))){serviceProvider.get().setPhoneNumber(updateProfileRequest.getPhoneNumber());}
-        if (!(serviceProvider.get().getAddress().equals(updateProfileRequest.getAddress()))){serviceProvider.get().setAddress(updateProfileRequest.getAddress());}
-        if (!(serviceProvider.get().getBioData().equals(updateProfileRequest.getBioData()))){serviceProvider.get().setBioData(updateProfileRequest.getBioData());}
-        if (!(serviceProvider.get().getJob().equals(updateProfileRequest.getJob()))) serviceProvider.get().setJob(updateProfileRequest.getJob());
-//        if ((serviceProvider.get().getUserName().equals(updateProfileRequest.getUsername()))){ serviceProvider.get().setUserName(updateProfileRequest.getUsername());}
-        if (serviceProvider.get().equals(serviceProvider.get().getChargePerHour())){ serviceProvider.get().setChargePerHour(updateProfileRequest.getChargePerHour());}
-        if (serviceProvider.get().equals(serviceProvider.get().isAvailableForTraining())){ serviceProvider.get().setAvailableForTraining(updateProfileRequest.isAvailableForTraining());}
+        if (!(updateProfileRequest.getUpdatedEmail() == null)){serviceProvider.get().setEmail(updateProfileRequest.getUpdatedEmail());}
+        if (!(updateProfileRequest.getPassword() == null)){serviceProvider.get().setPassword(updateProfileRequest.getPassword());}
+        if (!(updateProfileRequest.getPhoneNumber() ==  null)){serviceProvider.get().setPhoneNumber(updateProfileRequest.getPhoneNumber());}
+        if (!(updateProfileRequest.getAddress() == null)){serviceProvider.get().setAddress(updateProfileRequest.getAddress());}
+        if (!(updateProfileRequest.getBioData() == null)){serviceProvider.get().setBioData(updateProfileRequest.getBioData());}
+        if (!(updateProfileRequest.getJob() == null)) serviceProvider.get().setJob(updateProfileRequest.getJob());
+        if (!(updateProfileRequest.getUsername() == null)){ serviceProvider.get().setUserName(updateProfileRequest.getUsername());}
+//        if (updateProfileRequest.isAvailableForTraining())updateProfileRequest.isAvailableForTraining()){ serviceProvider.get().setChargePerHour(updateProfileRequest.getChargePerHour());}
+        if (serviceProvider.get().isAvailableForTraining() != updateProfileRequest.isAvailableForTraining()){ serviceProvider.get().setAvailableForTraining(updateProfileRequest.isAvailableForTraining());}
+        providerRepository.save(serviceProvider.get());
+    }
+
+    @Override
+    public void deleteAccount(String email) {
+        Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(email);
+        if (serviceProvider.isEmpty()) throw new InvalidDetailsException(email + " does not exist!!!");
+        userExist(email);
+        providerRepository.delete(serviceProvider.get());
+        serviceProvider.get().setLoginStatus(false);
+        providerRepository.save(serviceProvider.get());
+    }
+
+    @Override
+    public void responseToTrainingRequest(ResponseToTrainingRequest response) {
+        Optional <ServiceProvider> serviceProvider = providerRepository.findByEmail(response.getEmail());
+        userExist(response.getEmail());
+        if (!isLocked(response.getEmail()))throw new AppLockedException("Kindly login");
+        CourseApplication course = courseApplicationService.responseOnTraineeCourseApplication(response);
+        if(course.getCourseStatus() == CourseStatus.REJECTED)removeUser(course.getTraineeEmail(), course.getTrainerEmail());
+        adminService.sendTraineeCourseApplicationResponse(response.getCourseCode(),course);
+
+
+    }
+
+    @Override
+    public void saveTrainees(Trainee foundTrainee, String trainerEmail) {
+        Optional<ServiceProvider> serviceProvider = providerRepository.findByEmail(trainerEmail);
+        if(serviceProvider.isEmpty())throw new UserExistException("Trainer doesn't exist");
+        List<Trainee> trainees = new ArrayList<>();
+        trainees.add(foundTrainee);
+        serviceProvider.get().setTrainees(trainees);
+        providerRepository.save(serviceProvider.get());
+    }
+
+    @Override
+    public void save(String email) {
+        Optional<ServiceProvider>  serviceProvider = providerRepository.findByEmail(email);
+        if(serviceProvider.isEmpty())throw new UserExistException("user doesn't exist");
+        serviceProvider.get().setAvailable(true);
         providerRepository.save(serviceProvider.get());
     }
 

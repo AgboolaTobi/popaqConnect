@@ -3,27 +3,24 @@ package org.popaqConnect.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.popaqConnect.data.BookType;
-import org.popaqConnect.data.JobCategory;
 import org.popaqConnect.data.models.Book;
-import org.popaqConnect.data.models.Job;
 import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.repositories.ClientRepository;
 import org.popaqConnect.data.repositories.JobRepository;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
+import org.popaqConnect.dtos.requests.LoginRequest;
+import org.popaqConnect.dtos.requests.ServiceProviderRegisterRequest;
+import org.popaqConnect.dtos.requests.ServiceProviderUpdateRequest;
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.BookResponse;
 import org.popaqConnect.exceptions.InvalidDetailsException;
 import org.popaqConnect.exceptions.InvalidLoginException;
 import org.popaqConnect.exceptions.UserExistException;
 import org.popaqConnect.data.CourseStatus;
-import org.popaqConnect.data.models.Book;
 import org.popaqConnect.data.models.CourseApplication;
-import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.data.models.Trainee;
 import org.popaqConnect.data.repositories.*;
-import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
-import org.popaqConnect.dtos.response.BookResponse;
 import org.popaqConnect.exceptions.*;
 import org.popaqConnect.services.Booking.BookServices;
 import org.popaqConnect.services.Trainee.TraineeService;
@@ -177,7 +174,7 @@ public class ServiceProviderServiceImplTest {
       assertThrows(InvalidLoginException.class, ()->  service.login(loginRequest));
       loginRequest.setEmail("philipoddacey75@gmail.com");
       loginRequest.setPassword("Ope5y5xv@");
-      assertThrows(InvalidLoginException.class, ()->  service.login(loginRequest));
+      assertThrows(UserExistException.class, ()->  service.login(loginRequest));
    }
     @Test
    public void registerServiceProvider_WithTheRightDetails_LoginWithTheWrongPasswordThrowException() {
@@ -189,7 +186,7 @@ public class ServiceProviderServiceImplTest {
        registerRequest.setPhoneNumber("+2349019539651");
        registerRequest.setYearsOfExperience(2);
        registerRequest.setBioData("i an philip i am a software engineer");
-        registerRequest.setChargePerHour(2500.00);
+       registerRequest.setChargePerHour(2500.00);
        registerRequest.setCategory("ENGINEER");
        registerRequest.setJobTitle("Software engineer");
        service.register(registerRequest);
@@ -200,6 +197,7 @@ public class ServiceProviderServiceImplTest {
     }
     @Test
    public void testThatServiceProviderCanUpdateTheTraineeStatusFromLearningToCompleted(){
+
        service.register(registerRequest);
         service.login(loginRequest);
 
@@ -293,7 +291,7 @@ public class ServiceProviderServiceImplTest {
        cancelRequest.setEmail("ope@gmail.com");
        cancelRequest.setId(trainingResponse.getMessage());
        cancelRequest.setServiceProviderEmail("philipodey75@gmail.com");
-       service.cancleRequest(cancelRequest);
+       service.cancleTrainingRequest(cancelRequest);
 
        ViewTraineeCourseRequest courseApplication = new ViewTraineeCourseRequest();
        courseApplication.setCourseCode(trainingResponse.getMessage());
@@ -341,21 +339,9 @@ public class ServiceProviderServiceImplTest {
     }
         @Test
    public  void registerServiceProvider_LoginServiceProvider_RegisterClient_loginClient_ClientBook_ServiceProviderAccept_CompleteJobStatusTest(){
-        ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
-        registerRequest.setUserName("ope");
-        registerRequest.setPassword("PhilipOdey@75");
-        registerRequest.setEmail("philipodey75@gmail.com");
-        registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("+2349019539651");
-        registerRequest.setYearsOfExperience(2);
-        registerRequest.setBioData("i an philip i am a software engineer");
-        registerRequest.setChargePerHour(2500.00);
-        registerRequest.setCategory("ENGINEER");
-        registerRequest.setJobTitle("Software engineer");
+
         service.register(registerRequest);
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("philipodey75@gmail.com");
-        loginRequest.setPassword("PhilipOdey@75");
+
         service.login(loginRequest);
 
         RegisterRequest clientRegisterRequest = new RegisterRequest();
@@ -409,22 +395,9 @@ public class ServiceProviderServiceImplTest {
     }
      @Test
    public  void registerServiceProvider_LoginServiceProvider_RegisterClient_loginClient_ClientBook_ServiceProviderCancelTest(){
-        ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
-        registerRequest.setUserName("ope");
-        registerRequest.setPassword("PhilipOdey@75");
-        registerRequest.setEmail("philipodey75@gmail.com");
-        registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("+2349019539651");
-        registerRequest.setYearsOfExperience(2);
-        registerRequest.setBioData("i an philip i am a software engineer");
-        registerRequest.setChargePerHour(2500.00);
-        registerRequest.setCategory("ENGINEER");
-        registerRequest.setJobTitle("Software engineer");
+
         service.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("philipodey75@gmail.com");
-        loginRequest.setPassword("PhilipOdey@75");
         service.login(loginRequest);
 
         RegisterRequest clientRegisterRequest = new RegisterRequest();
@@ -478,24 +451,11 @@ public class ServiceProviderServiceImplTest {
     }
     @Test
     public void registerServiceProvider_loginServiceProvider_UpdateDetails_LoginWithUpdatedDetailsTest(){
-        ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
-        registerRequest.setUserName("ope");
-        registerRequest.setPassword("PhilipOdey@75");
-        registerRequest.setEmail("philipodey75@gmail.com");
-        registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("+2349019539651");
-        registerRequest.setYearsOfExperience(2);
-        registerRequest.setBioData("i an philip i am a software engineer");
-        registerRequest.setChargePerHour(2500.00);
-        registerRequest.setCategory("ENGINEER");
-        registerRequest.setJobTitle("Software engineer");
-        service.register(registerRequest);
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("philipodey75@gmail.com");
-        loginRequest.setPassword("PhilipOdey@75");
 
+        service.register(registerRequest);
+        service.login(loginRequest);
         UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest();
-//        updateProfileRequest.setUsername("Philip");
+        updateProfileRequest.setUsername("Philip");
         updateProfileRequest.setPassword("Opetobi@75");
         updateProfileRequest.setUpdatedEmail("opetobi34@gmail.com");
         updateProfileRequest.setPreviousEmail("philipodey75@gmail.com");
@@ -512,22 +472,9 @@ public class ServiceProviderServiceImplTest {
     }
     @Test
     public void registerServiceProvider_LoginServiceProvider_LogoutCheckLoginStatusTest(){
-        ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
-        registerRequest.setUserName("ope");
-        registerRequest.setPassword("PhilipOdey@75");
-        registerRequest.setEmail("philipodey75@gmail.com");
-        registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("+2349019539651");
-        registerRequest.setYearsOfExperience(2);
-        registerRequest.setBioData("i an philip i am a software engineer");
-        registerRequest.setChargePerHour(2500.00);
-        registerRequest.setCategory("ENGINEER");
-        registerRequest.setJobTitle("Software engineer");
+
         service.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("philipodey75@gmail.com");
-        loginRequest.setPassword("PhilipOdey@75");
         service.login(loginRequest);
 
         Optional<ServiceProvider> serviceProvider = service.findUser("philipodey75@gmail.com");
@@ -540,22 +487,9 @@ public class ServiceProviderServiceImplTest {
     }
      @Test
     public void registerServiceProvider_LoginServiceProvider_LogoutCheckLoginStatus_LoginCheckLoginStatusTest(){
-        ServiceProviderRegisterRequest registerRequest = new ServiceProviderRegisterRequest();
-        registerRequest.setUserName("ope");
-        registerRequest.setPassword("PhilipOdey@75");
-        registerRequest.setEmail("philipodey75@gmail.com");
-        registerRequest.setAddress("yaba mowe");
-        registerRequest.setPhoneNumber("+2349019539651");
-        registerRequest.setYearsOfExperience(2);
-        registerRequest.setBioData("i an philip i am a software engineer");
-        registerRequest.setChargePerHour(2500.00);
-        registerRequest.setCategory("ENGINEER");
-        registerRequest.setJobTitle("Software engineer");
+
         service.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("philipodey75@gmail.com");
-        loginRequest.setPassword("PhilipOdey@75");
         service.login(loginRequest);
 
         Optional<ServiceProvider> serviceProvider = service.findUser("philipodey75@gmail.com");
@@ -570,5 +504,74 @@ public class ServiceProviderServiceImplTest {
          serviceProvider = service.findUser("philipodey75@gmail.com");
          assertTrue(serviceProvider.get().isLoginStatus());
     }
+    @Test
+    public void testThatWhenServiceProviderAcceptTrainingRequestTrainingCourseStatusChangeFromNoviceToLearning(){
+        service.register(registerRequest);
+        service.login(loginRequest);
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName("Ope");
+        request.setPassword("Iniestajnr1");
+        request.setEmail("ope@gmail.com");
+        request.setAddress("yaba mowe");
+        request.setPhoneNumber("09089447913");
+        traineeService.register(request);
+
+
+        LoginRequest loginRequests = new LoginRequest();
+        loginRequests.setEmail("ope@gmail.com");
+        loginRequests.setPassword("Iniestajnr1");
+        traineeService.login(loginRequests);
+
+        Optional<ServiceProvider> serviceProvider = service.findUser(loginRequest.getEmail());
+        serviceProvider.get().setAvailableForTraining(true);
+        serviceProviderRepository.save(serviceProvider.get());
+
+        TrainingRequest trainingApplication = new TrainingRequest();
+
+        trainingApplication.setTraineeEmail("ope@gmail.com");
+        trainingApplication.setStartDate("1/2/2024");
+        trainingApplication.setEndDate("2/4/2024");
+        trainingApplication.setTrainerEmail("philipodey75@gmail.com");
+        trainingApplication.setAboutYou("my name is qudus,i have no pior knowledege to this, i hope you consider me");
+        ApplyForTrainingResponse trainingResponse = traineeService.applyForTraining(trainingApplication);
+
+        ViewCourseApplicationRequest viewCourseApplicationRequest = new ViewCourseApplicationRequest();
+        viewCourseApplicationRequest.setTraineeEmail("ope@gmail.com");
+        viewCourseApplicationRequest.setCourseCode(trainingResponse.getMessage());
+
+        CourseApplication course = traineeService.viewCourseApplication(viewCourseApplicationRequest);
+        assertSame(CourseStatus.NOVICE,course.getCourseStatus());
+
+        ResponseToTrainingRequest response = new ResponseToTrainingRequest();
+        response.setResponse("accepted");
+        response.setEmail("philipodey75@gmail.com");
+        response.setTraineeEmail("ope@gmail.com");
+        response.setCourseCode(trainingResponse.getMessage());
+
+        service.responseToTrainingRequest(response);
+
+        ViewTraineeCourseRequest view = new ViewTraineeCourseRequest();
+        view.setTrainerEmail("philipodey75@gmail.com");
+        view.setCourseCode(trainingResponse.getMessage());
+
+
+        course = service.viewACourseApplication(view);
+        assertSame(CourseStatus.LEARNING,course.getCourseStatus());
+    }
+
+    @Test
+    public void register_ServiceProvider_LoginServiceProvider_DeleteAccount_ServiceProviderAccountTryLoginInThrowExceptionTest(){
+        service.register(registerRequest);
+
+        service.login(loginRequest);
+
+       service.deleteAccount(registerRequest.getEmail());
+
+        Optional <ServiceProvider> serviceProvider = serviceProviderRepository.findByEmail(loginRequest.getEmail());
+        assertFalse(serviceProvider.get().isLoginStatus());
+
+    }
+
 
 }
+
