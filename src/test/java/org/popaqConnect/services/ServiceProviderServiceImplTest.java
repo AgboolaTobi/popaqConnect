@@ -10,7 +10,6 @@ import org.popaqConnect.data.repositories.JobRepository;
 import org.popaqConnect.data.repositories.ServiceProviderRepository;
 import org.popaqConnect.dtos.requests.LoginRequest;
 import org.popaqConnect.dtos.requests.ServiceProviderRegisterRequest;
-import org.popaqConnect.dtos.requests.ServiceProviderUpdateRequest;
 import org.popaqConnect.dtos.requests.*;
 import org.popaqConnect.dtos.response.BookResponse;
 import org.popaqConnect.exceptions.InvalidDetailsException;
@@ -293,7 +292,7 @@ public class ServiceProviderServiceImplTest {
        cancelRequest.setEmail("ope@gmail.com");
        cancelRequest.setId(trainingResponse.getMessage());
        cancelRequest.setServiceProviderEmail("philipodey75@gmail.com");
-       service.cancleTrainingRequest(cancelRequest);
+       service.cancelTrainingRequest(cancelRequest);
 
        ViewTraineeCourseRequest courseApplication = new ViewTraineeCourseRequest();
        courseApplication.setCourseCode(trainingResponse.getMessage());

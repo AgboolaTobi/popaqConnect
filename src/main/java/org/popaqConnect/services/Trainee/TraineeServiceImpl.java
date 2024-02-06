@@ -109,7 +109,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void updateProfile(TraineeUpdateProfileRequest updateDetailRequest) {
-        if(updateDetailRequest.getEmail()== null)throw new InvalidDetailsException("Kindly input correct credentials");
      Trainee trainee = traineeRepository.findByEmail(updateDetailRequest.getEmail());
      if (!userExist(updateDetailRequest.getEmail())) throw new UserExistException(updateDetailRequest.getEmail() + " does not exist");
 
