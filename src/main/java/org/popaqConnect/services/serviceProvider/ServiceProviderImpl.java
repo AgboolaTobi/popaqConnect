@@ -134,7 +134,7 @@ public class ServiceProviderImpl implements ServiceProviderServices {
     }
 
     @Override
-    public void cancleTrainingRequest(CancelServiceProviderRequest cancelRequest) {
+    public void cancelTrainingRequest(CancelServiceProviderRequest cancelRequest) {
         Optional<ServiceProvider> serviceProvider = findUser(cancelRequest.getServiceProviderEmail());
         userExist(cancelRequest.getServiceProviderEmail());
         if(!serviceProvider.get().isLoginStatus())throw new AppLockedException("Kindly login");
