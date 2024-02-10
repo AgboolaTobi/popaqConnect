@@ -3,12 +3,10 @@ import org.popaqConnect.data.CourseStatus;
 import org.popaqConnect.data.models.Client;
 import org.popaqConnect.data.models.CourseApplication;
 import org.popaqConnect.data.models.Trainee;
-import org.popaqConnect.data.models.ServiceProvider;
 import org.popaqConnect.dtos.requests.EmailRequest;
 import org.popaqConnect.dtos.requests.RegisterRequest;
-import org.popaqConnect.dtos.requests.TraineeRegisterRequest;
+import org.popaqConnect.dtos.requests.TraineeRegistrationRequest;
 import org.popaqConnect.dtos.requests.TrainingRequest;
-import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
 
 public class  Mapper {
 
@@ -22,7 +20,7 @@ public class  Mapper {
         client.setPassword(registerRequest.getPassword());
         return client;
     }
-    public static Trainee mapTrainee(TraineeRegisterRequest traineeRegisterRequest) {
+    public static Trainee mapTrainee(TraineeRegistrationRequest traineeRegisterRequest) {
         Trainee trainee = new Trainee();
         trainee.setUsername(traineeRegisterRequest.getUserName());
         trainee.setPhoneNumber(traineeRegisterRequest.getPhoneNumber());

@@ -1,10 +1,7 @@
-package org.popaqConnect.controllers;
+package org.popaqConnect.controller;
 
 import org.popaqConnect.dtos.requests.*;
-import org.popaqConnect.dtos.response.ApiResponse;
-import org.popaqConnect.dtos.response.ServiceProviderCancelBookingRequestResponse;
-import org.popaqConnect.dtos.response.ServiceProviderRegisterResponse;
-import org.popaqConnect.dtos.response.ServiceProviderUpdateRequestResponse;
+import org.popaqConnect.dtos.response.*;
 import org.popaqConnect.exceptions.PopaqConnectException;
 import org.popaqConnect.services.serviceProvider.ServiceProviderServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +79,19 @@ public class ServiceProviderController {
         catch(PopaqConnectException exception){
             providerUpdateRequest.setMessage(exception.getMessage());
             return new ResponseEntity<>(new ApiResponse(false, providerUpdateRequest), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping("/findAllTrainees/{mail}")
+    public ResponseEntity<?> findAllTrainees(@PathVariable("mail") String mail) {
+        FindAllTraineesResponse findAllTraineesResponse = new FindAllTraineesResponse();
+        try {
+            findAllTraineesResponse.setAllTrainees(providerServices.findAllTrainees(mail));
+            return new ResponseEntity<>(new ApiResponse(true,findAllTraineesResponse), HttpStatus.FOUND);
+        }catch (PopaqConnectException popaqConnectException){
+            findAllTraineesResponse.setAllTrainees(popaqConnectException.getMessage());
+            return new ResponseEntity<>(new ApiResponse(false,findAllTraineesResponse),HttpStatus.NOT_IMPLEMENTED);
         }
     }
 

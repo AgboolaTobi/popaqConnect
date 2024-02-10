@@ -32,7 +32,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     AdminService adminService;
     @Override
-    public void register(TraineeRegisterRequest traineeRegisterRequest) {
+    public void register(TraineeRegistrationRequest traineeRegisterRequest) {
         if (userExist(traineeRegisterRequest.getEmail())) throw new UserExistException(traineeRegisterRequest.getEmail()+
                 " Already Exist");
         if(!Verification.verifyPassword(traineeRegisterRequest.getPassword()))
