@@ -10,21 +10,13 @@ import org.popaqConnect.dtos.response.ApplyForTrainingResponse;
 import java.util.List;
 
 public interface TraineeService  {
-    void register(TraineeRegisterRequest traineeRegisterRequest);
+    void register(TraineeRegistrationRequest traineeRegisterRequest);
     void login(TraineeLoginRequest traineeLoginRequest);
-
     ApplyForTrainingResponse applyForTraining(TrainingRequest traineeApplication);
-
     List<ServiceProvider> searchForTrainers(String email);
-
     void cancelCourseApplication(CancelCourseRequest cancelCourseRequest);
-
     CourseApplication viewCourseApplication(ViewCourseApplicationRequest viewCourseApplication);
-
     void updateProfile(TraineeUpdateProfileRequest updateDetailRequest);
-
     void logout(String email);
-
-
     Trainee findTrainee(String traineeEmail);
 }

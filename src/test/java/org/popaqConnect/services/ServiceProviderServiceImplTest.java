@@ -206,7 +206,7 @@ public class ServiceProviderServiceImplTest {
         serviceProvider.get().setAvailableForTraining(true);
         serviceProviderRepository.save(serviceProvider.get());
 
-        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        TraineeRegistrationRequest traineeRegisterRequest = new TraineeRegistrationRequest();
         traineeRegisterRequest.setUserName("Philip");
         traineeRegisterRequest.setPassword("Iniestajnr1");
         traineeRegisterRequest.setEmail("ope@gmail.com");
@@ -255,7 +255,7 @@ public class ServiceProviderServiceImplTest {
    public void testThatWhenServiceProviderAsOneTraineeAndHeCancelTheTrainingApplicationListOfHisTraineeIsZero(){
        service.register(registerRequest);
        service.login(loginRequest);
-       TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+       TraineeRegistrationRequest traineeRegisterRequest = new TraineeRegistrationRequest();
        traineeRegisterRequest.setUserName("Ope");
        traineeRegisterRequest.setPassword("Iniestajnr1");
        traineeRegisterRequest.setEmail("ope@gmail.com");
@@ -509,7 +509,7 @@ public class ServiceProviderServiceImplTest {
     public void testThatWhenServiceProviderAcceptTrainingRequestTrainingCourseStatusChangeFromNoviceToLearning(){
         service.register(registerRequest);
         service.login(loginRequest);
-        TraineeRegisterRequest request = new TraineeRegisterRequest();
+        TraineeRegistrationRequest request = new TraineeRegistrationRequest();
         request.setUserName("Ope");
         request.setPassword("Iniestajnr1");
         request.setEmail("ope@gmail.com");
@@ -578,7 +578,7 @@ public class ServiceProviderServiceImplTest {
         service.login(loginRequest);
 
 
-        TraineeRegisterRequest traineeRegisterRequest = new TraineeRegisterRequest();
+        TraineeRegistrationRequest traineeRegisterRequest = new TraineeRegistrationRequest();
         traineeRegisterRequest.setUserName("Philip");
         traineeRegisterRequest.setPassword("Iniestajnr1");
         traineeRegisterRequest.setEmail("ope@gmail.com");
@@ -603,9 +603,6 @@ public class ServiceProviderServiceImplTest {
         trainingApplication.setTrainerEmail("philipodey75@gmail.com");
         trainingApplication.setAboutYou("my name is qudus,i have no pior knowledege to this, i hope you consider me");
         ApplyForTrainingResponse trainingResponse = traineeService.applyForTraining(trainingApplication);
-
-
-
 
         FindTraineeByEmailRequest findTraineeByEmailRequest = new FindTraineeByEmailRequest();
         findTraineeByEmailRequest.setServiceProviderEmail("philipodey75@gmail.com");

@@ -20,7 +20,7 @@ public interface ServiceProviderServices {
     List<Book> findAllBookingHistory(String mail);
     Book viewABookingHistory(ViewABookingRequest viewABookingRequest);
     void removeUser(String traineeEmail, String trainerEmail);
-    void cancelTrainingRequest(CancelServiceProviderRequest cancelRequest);
+    void cancleTrainingRequest(CancelServiceProviderRequest cancelRequest);
 
     void completeJobStatus(CompleteJobRequest completeJobRequest);
 
