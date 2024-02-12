@@ -1,10 +1,7 @@
 package org.popaqConnect.controllers;
 
 import org.popaqConnect.dtos.requests.*;
-import org.popaqConnect.dtos.response.ApiResponse;
-import org.popaqConnect.dtos.response.ServiceProviderCancelBookingRequestResponse;
-import org.popaqConnect.dtos.response.ServiceProviderRegisterResponse;
-import org.popaqConnect.dtos.response.ServiceProviderUpdateRequestResponse;
+import org.popaqConnect.dtos.response.*;
 import org.popaqConnect.exceptions.PopaqConnectException;
 import org.popaqConnect.services.serviceProvider.ServiceProviderServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,71 +16,108 @@ public class ServiceProviderController {
     private ServiceProviderServices providerServices;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody ServiceProviderRegisterRequest providerRegisterRequest){
+    public ResponseEntity<?> register(@RequestBody ServiceProviderRegisterRequest providerRegisterRequest) {
         ServiceProviderRegisterResponse providerRegisterResponse = new ServiceProviderRegisterResponse();
-        try{
+        try {
             providerServices.register(providerRegisterRequest);
             providerRegisterResponse.setMessage("Account created successful!!!");
             return new ResponseEntity<>(new ApiResponse(true, providerRegisterResponse), HttpStatus.CREATED);
-        }
-        catch (PopaqConnectException ex){
+        } catch (PopaqConnectException ex) {
             providerRegisterResponse.setMessage(ex.getMessage());
             return new ResponseEntity<>(new ApiResponse(false, providerRegisterResponse), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest){
-        try{
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        ServiceProviderLoginResponse providerLoginResponse = new ServiceProviderLoginResponse();
+        try {
             providerServices.login(loginRequest);
-            return "Login Successful";
-        }
-        catch (PopaqConnectException exception){
-            return exception.getMessage();
+            providerLoginResponse.setMessage("Login Successful");
+            return new ResponseEntity<>(new ApiResponse(true, providerLoginResponse), HttpStatus.GONE);
+        } catch (PopaqConnectException exception) {
+            providerLoginResponse.setMessage(exception.getMessage());
+            return new ResponseEntity<>(new ApiResponse(false, providerLoginResponse), HttpStatus.BAD_REQUEST);
         }
     }
 
 
     @PostMapping("/acceptClientRequest")
-    public String acceptClientRequest(@RequestBody AcceptBookingRequest acceptBookingRequest){
-        ServiceProviderCancelBookingRequestResponse cancelBookingRequestResponse = new ServiceProviderCancelBookingRequestResponse();
+    public String acceptClientRequest(@RequestBody AcceptBookingRequest acceptBookingRequest) {
+
         try {
             providerServices.acceptClientBookRequest(acceptBookingRequest);
             return "booking accepted";
-        }
-        catch (PopaqConnectException exception){
+        } catch (PopaqConnectException exception) {
             return exception.getMessage();
         }
     }
 
 
     @PostMapping("/cancelClientBookRequest")
-    public ResponseEntity<?> cancelClientBookRequest(@RequestBody CancelBookingRequest cancelBookingRequest){
+    public ResponseEntity<?> cancelClientBookRequest(@RequestBody CancelBookingRequest cancelBookingRequest) {
         ServiceProviderCancelBookingRequestResponse bookingRequestResponse = new ServiceProviderCancelBookingRequestResponse();
-        try{
+        try {
             providerServices.cancelClientBookRequest(cancelBookingRequest);
             bookingRequestResponse.setMessage("Booking request cancelled successful!!!");
             return new ResponseEntity<>(new ApiResponse(true, bookingRequestResponse), HttpStatus.GONE);
-        }
-        catch (PopaqConnectException exception){
+        } catch (PopaqConnectException exception) {
             bookingRequestResponse.setMessage(exception.getMessage());
             return new ResponseEntity<>(new ApiResponse(false, bookingRequestResponse), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/updateDetails")
-    public ResponseEntity<?> updateDetails(@RequestBody UpdateProfileRequest updateProfileRequest){
-        ServiceProviderUpdateRequestResponse providerUpdateRequest = new ServiceProviderUpdateRequestResponse();
+    public ResponseEntity<?> updateDetails(@RequestBody UpdateProfileRequest updateProfileRequest) {
+        ServiceProviderUpdateResponse providerUpdateResponse = new ServiceProviderUpdateResponse();
         try {
             providerServices.updateDetails(updateProfileRequest);
-            providerUpdateRequest.setMessage("account update successful!!! ");
-            return new ResponseEntity<>(new ApiResponse(true, providerUpdateRequest), HttpStatus.GONE);
-        }
-        catch(PopaqConnectException exception){
-            providerUpdateRequest.setMessage(exception.getMessage());
-            return new ResponseEntity<>(new ApiResponse(false, providerUpdateRequest), HttpStatus.BAD_REQUEST);
+            providerUpdateResponse.setMessage("account update successful!!! ");
+            return new ResponseEntity<>(new ApiResponse(true, providerUpdateResponse), HttpStatus.GONE);
+        } catch (PopaqConnectException exception) {
+            providerUpdateResponse.setMessage(exception.getMessage());
+            return new ResponseEntity<>(new ApiResponse(false, providerUpdateResponse), HttpStatus.BAD_REQUEST);
         }
     }
 
+    @PostMapping("/completeJobStatus")
+    public ResponseEntity<?> completeJobStatus(@RequestBody CompleteJobRequest completeJobRequest) {
+        ServiceProviderCompleteJobResponse providerCompleteJobResponse = new ServiceProviderCompleteJobResponse();
+        try {
+            providerServices.completeJobStatus(completeJobRequest);
+            providerCompleteJobResponse.setMessage("job completed");
+            return new ResponseEntity<>(new ApiResponse(true, providerCompleteJobResponse), HttpStatus.OK);
+        } catch (PopaqConnectException exception) {
+            providerCompleteJobResponse.setMessage(exception.getMessage());
+            return new ResponseEntity<>(new ApiResponse(false, providerCompleteJobResponse), HttpStatus.BAD_REQUEST);
+        }
 
+    }
+
+    @PostMapping("/cancelTrainingRequest")
+    public ResponseEntity<?> cancelTrainingRequest(@RequestBody CancelServiceProviderRequest cancelServiceProviderRequest) {
+        ServiceProviderCancelTraineeRequest providerCancelTraineeRequest = new ServiceProviderCancelTraineeRequest();
+        try {
+            providerServices.cancelTrainingRequest(cancelServiceProviderRequest);
+            providerCancelTraineeRequest.setMessage("request Cancelled successful!!!");
+            return new ResponseEntity<>(new ApiResponse(true, providerCancelTraineeRequest), HttpStatus.GONE);
+        } catch (PopaqConnectException exception) {
+            providerCancelTraineeRequest.setMessage(exception.getMessage());
+            return new ResponseEntity<>(new ApiResponse(true, providerCancelTraineeRequest), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/deleteAccount")
+    public String deleteAccount(@RequestParam String serviceProviderEmail) {
+
+        try {
+            providerServices.deleteAccount(serviceProviderEmail);
+            return "account deleted successfully";
+        }
+        catch (PopaqConnectException exception){
+            return exception.getMessage();
+        }
+    }
 }
+
+
